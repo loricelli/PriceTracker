@@ -1,0 +1,39 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>senza nome</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.23.1" />
+	<script type="text/javascript">
+	chrome.contextMenus.create({
+		title: "add to site",
+		contexts: ["page", "selection", "image", "link"],
+		//icon: "calculator-16.png"
+		"onclick": contextClicked
+		//"icon": "calculator-16.png"
+	});
+
+
+function contextClicked(e){
+
+
+	console.log("Ciao click");
+	//var url=e.pageUrl;
+	chrome.tabs.create({url: e.pageUrl});
+}
+	</script>
+</head>
+
+<body>
+		<form name=log action="registrazione" method="post">
+		Nome <input name="nome" type="text" value="">
+		Password <input name="pwd" type="password" value="">
+		<input type="submit" value="Submit" >
+		
+	</form>
+</body>
+
+</html>
