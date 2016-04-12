@@ -1,11 +1,11 @@
-var bodyParser= require("/usr/lib/node_modules/body-parser");
+var bodyParser= require("body-parser");///usr/lib
 var fs= require('fs');
-var express= require('/usr/lib/node_modules/express');
+var express= require('express');
 var app=express();
 app.use(bodyParser());
-var ebay = require('/home/lorenzo/node_modules/ebay-api/index.js');
+var ebay = require('ebay-api/index.js');
 var MongoClient = require('mongodb').MongoClient;
-var assert = require('assert');
+//var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 
