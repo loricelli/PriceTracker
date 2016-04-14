@@ -36,7 +36,7 @@ function insertDB(url_mongo,item){
 app.get('/', function(request,response){ //carica la pagina
 	response.writeHead(200, {"Content-type": "text/html"});
 	console.log("main request get");
-	fs.createReadStream("./index.html").pipe(response);
+	fs.createReadStream("./access_page.html").pipe(response);
 });
 
 
