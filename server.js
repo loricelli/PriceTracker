@@ -38,6 +38,16 @@ app.get('/', function(request,response){ //carica la pagina
 	console.log("main request get");
 	fs.createReadStream("./access_page.html").pipe(response);
 });
+app.get('/register', function(request,response){ //carica la pagina
+	response.writeHead(200, {"Content-type": "text/html"});
+	console.log("main request get");
+	fs.createReadStream("./register.html").pipe(response);
+});
+app.get('/access_page', function(request,response){ //carica la pagina
+	response.writeHead(200, {"Content-type": "text/html"});
+	console.log("main request get");
+	fs.createReadStream("./access_page.html").pipe(response);
+});
 
 
 app.post('/',function(request,response){

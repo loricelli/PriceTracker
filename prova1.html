@@ -1,0 +1,232 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+
+<head>
+
+</head>
+
+<body>
+
+<div class="column full">
+			<div class="center">
+				<img src="/home/cesco/MEGAsync/immagini/IMG_20150927_123026.jpg" class="circle">
+			</div>
+			<div class="display center">
+				<h1>Price Tracker</h1>
+				<p>cos'è PriceTracker ?&nbsp;</p></div><p><span style="font-size: 20px;">PriceTracker è un servizio per eBay che ti permette di monitorare il costo del prodotto che desideri.
+<br>Tutto quello che devi fare è incollare il link del prodotto e specificare il prezzo al quale lo compreresti.
+<br>Penseremo noi ad avvertirti quando il prezzo del prodotto sarà sceso fino a raggiungere quello che hai chiesto.
+</span></p>
+		</div>
+    <div class="column full">
+<hr>
+</div>
+<div class="column half" style="font-family: 'Maven Pro', sans-serif;">
+
+
+
+
+
+
+
+
+<script id="facebook-jssdk" src="//connect.facebook.net/en_US/sdk.js"></script><script>
+
+
+function statusChangeCallback(response) {
+    console.log('statusChangeCallback');
+    console.log(response);
+    // The response object is returned with a status field that lets the
+    // app know the current login status of the person.
+    // Full docs on the response object can be found in the documentation
+    // for FB.getLoginStatus().
+    if (response.status === 'connected') {
+
+      // Logged into your app and Facebook.
+      testAPI();
+    } else if (response.status === 'not_authorized') {
+      // The person is logged into Facebook, but not your app.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into this app.';
+    } else {
+      // The person is not logged into Facebook, so we're not sure if
+      // they are logged into this app or not.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into Facebook.';
+    }
+  }
+
+  // This function is called when someone finishes with the Login
+  // Button.  See the onlogin handler attached to it in the sample
+  // code below.
+  function checkLoginState() {
+    FB.getLoginStatus(function(response) {
+      statusChangeCallback(response);
+    });
+  }
+
+
+
+window.fbAsyncInit = function() {
+  FB.init({
+    appId      : '227275500970804',
+    xfbml      : true,
+    version    : 'v2.5'
+  });
+};
+
+(function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "//connect.facebook.net/en_US/sdk.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
+
+ FB.getLoginStatus(function(response) {
+   console.log(response);
+  statusChangeCallback(response);
+});
+
+function testAPI() {
+console.log('Welcome!  Fetching your information.... ');
+FB.api('/me', function(response) {
+  console.log('Successful login for: ' + response.name);
+  document.getElementById('status').innerHTML =
+    'Thanks for logging in, ' + response.name + '!';
+});
+}
+
+</script>
+
+<h1 align="center" style="font-family: Comfortaa, cursive;"><span style="font-size: 22px;">REGISTRAZIONE</span></h1>
+<h3 align="center"><span style="font-size: 22px;"> inserisci username email e password per regstrarti: </span></h3>
+
+
+      <form name="url_in" action="/" method="post">
+		<div align="center"><span style="font-size: 22px;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; username <input name="username" type="text" value=""><br><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; email <input name="email" type="text" value=""><br><br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;password <input name="psw1" type="password" value=""><br><span style="line-height: 1.7;"><br></span></span></div><div align="center"><span style="font-size: 22px;"><span style="line-height: 1.7;">verifica password </span><input name="psw2" type="password" value=""><br></span></div><div align="center"><span style="font-size: 22px;"><br>
+  		<input type="submit" value="registrati">
+		</span></div>
+		</form>
+<h2 align="center"><span style="font-size: 22px;">o</span></h2>
+<h1 align="center"><span style="font-size: 22px;">Registrati con Facebook </span></h1>
+<div align="center">
+	<fb:login-button style="width:200px" scope="public_profile,email" onlogin="checkLoginState();">
+	</fb:login-button>
+</div>
+
+
+
+
+        </div>
+        <div class="column half">
+
+<meta charset="UTF-8">
+
+  <style>
+    h6 {
+      align-content: center;
+    }
+  </style>
+
+
+
+
+  <script>
+
+	function statusChangeCallback(response) {
+	    console.log('statusChangeCallback');
+	    console.log(response);
+	    // The response object is returned with a status field that lets the
+	    // app know the current login status of the person.
+	    // Full docs on the response object can be found in the documentation
+	    // for FB.getLoginStatus().
+	    if (response.status === 'connected') {
+
+	      // Logged into your app and Facebook.
+	      testAPI();
+	    } else if (response.status === 'not_authorized') {
+	      // The person is logged into Facebook, but not your app.
+	      document.getElementById('status').innerHTML = 'Please log ' +
+	        'into this app.';
+	    } else {
+	      // The person is not logged into Facebook, so we're not sure if
+	      // they are logged into this app or not.
+	      document.getElementById('status').innerHTML = 'Please log ' +
+	        'into Facebook.';
+	    }
+	  }
+
+	  // This function is called when someone finishes with the Login
+	  // Button.  See the onlogin handler attached to it in the sample
+	  // code below.
+	  function checkLoginState() {
+	    FB.getLoginStatus(function(response) {
+	      statusChangeCallback(response);
+	    });
+	  }
+
+
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '227275500970804',
+      xfbml      : true,
+      version    : 'v2.5'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+	 FB.getLoginStatus(function(response) {
+		 console.log(response);
+    statusChangeCallback(response);
+  });
+
+	function testAPI() {
+	console.log('Welcome!  Fetching your information.... ');
+	FB.api('/me', function(response) {
+		console.log('Successful login for: ' + response.name);
+		document.getElementById('status').innerHTML =
+			'Thanks for logging in, ' + response.name + '!';
+	});
+}
+
+</script>
+
+  <h1 align="center" style="font-family: Comfortaa, cursive;"><span style="font-size: 22px;"> ACCEDI</span></h1>
+
+
+  <h3><span style="font-size: 22px;">Esegui il login per accedere ai nostri servizi
+  </span></h3>
+
+  <form name="login" align="center"><span style="font-size: 22px;">
+
+        username <input name="username" type="text" value=""><br><br>
+
+    		password <input name="psw1" type="password" value=""><br><br>
+
+      	<input type="submit" value="Registrati">
+  </span></form>
+
+
+  <span style="font-size: 22px;"><br>
+</span><h2 align="center"><span style="font-size: 22px;">o</span></h2>
+  <h2 align="center"><span style="font-size: 22px;"> Login con Facebook</span></h2>
+  <div align="center">
+  <fb:login-button size="xlarge" scope="public_profile,email" onlogin="checkLoginState();">
+  </fb:login-button>
+</div>
+
+        </div>
+
+</body>
+</html>
