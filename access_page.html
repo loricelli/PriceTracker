@@ -1,18 +1,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<meta charset="UTF-8">
+
 <head>
-  <style>
-    h6 {
-      align-content: center;
-    }
-  </style>
+	<meta charset="utf-8"></meta>
 </head>
 
 <body>
 
-  <script>
+<script>
+
 
 	function statusChangeCallback(response) {
 	    console.log('statusChangeCallback');
@@ -48,70 +45,67 @@
 
 
 
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '227275500970804',
-      xfbml      : true,
-      version    : 'v2.5'
-    });
-  };
+	window.fbAsyncInit = function() {
+	  FB.init({
+	    appId      : '227275500970804',
+	    xfbml      : true,
+	    version    : 'v2.5'
+	  });
+	};
 
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "//connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
+	(function(d, s, id){
+	   var js, fjs = d.getElementsByTagName(s)[0];
+	   if (d.getElementById(id)) {return;}
+	   js = d.createElement(s); js.id = id;
+	   js.src = "//connect.facebook.net/en_US/sdk.js";
+	   fjs.parentNode.insertBefore(js, fjs);
+	 }(document, 'script', 'facebook-jssdk'));
 
 	 FB.getLoginStatus(function(response) {
-		 console.log(response);
-    statusChangeCallback(response);
-  });
+	   console.log(response);
+	  statusChangeCallback(response);
+	});
 
 	function testAPI() {
 	console.log('Welcome!  Fetching your information.... ');
 	FB.api('/me', function(response) {
-		console.log('Successful login for: ' + response.name);
-		document.getElementById('status').innerHTML =
-			'Thanks for logging in, ' + response.name + '!';
+		console.log('Stampo info facebook');
+		console.log(JSON.stringify(response));
+	  console.log('Successful login for: ' + response.name + response.email);
+	  document.getElementById('status').innerHTML =
+	    'Thanks for logging in, ' + response.name + '!';
 	});
-}
+	}
 
 </script>
-
-  <h1 align=center> Benvenuto su PriceTracker</h1>
+	<h1 align=center> Benvenuto su PriceTracker</h1>
 
   <h3>Cosa è PriceTracker?</h3>
 
   <p>PriceTracker è un servizio per eBay che ti permette di monitorare il costo del prodotto che desideri.
-  </br>Tutto quello che devi fare è incollare il link del prodotto e specificare il prezzo al quale lo compreresti.
-  </br>Penseremo noi ad avvertirti quando il prezzo del prodotto sarà sceso fino a raggiungere quello che hai chiesto.
+   Tutto quello che devi fare è incollare il link del prodotto e specificare il prezzo al quale lo compreresti.
+  Penseremo noi ad avvertirti quando il prezzo del prodotto sarà sceso fino a raggiungere quello che hai chiesto.
   </p>
 
   <h3>Esegui il login per accedere ai nostri servizi
   e scarica la Chrome App per utilizzarli direttamente dalla pagina del prodotto che stai vedendo.</h3>
+	<h1 align="center" style="font-family: Comfortaa, cursive;"><span style="font-size: 22px;"> ACCEDI</span></h1>
+	<h3 style="font-size: 22px;" align="center">Esegui il login per accedere ai nostri servizi</h3>
 
+	<form name="login" align="center" style="font-size: 18px;" action="/access_page" method="post">
+				email <input type="text"  name="email"  value="" ><br><br>
+				password <input name="psw1" type="password" value=""><br><br>
 
-  <h2 align=center> Login</h2>
+				<input type="submit" value="Registrati">
+	</form>
 
-  <form name=login align=center>
-
-        username <input name="username" type="text" value=""><BR><BR>
-    		email <input name="email" type="text" value=""><BR><BR>
-    		password <input name="psw1" type="password" value=""><BR><BR>
-    		verifica password <input name="psw2" type="password" value=""><BR><BR>
-      	<input type="submit" value="Registrati">
-  </form>
-
-  </br>
-  </br>
-  </br>
-  <h2 align=center> Registrati con Facebook</h2>
-  <div align=center>
-  <fb:login-button size= "xlarge" scope="public_profile,email" onlogin="checkLoginState();">
-  </fb:login-button>
-</div>
-
+	<div align="center" style="font-size: 18px;">
+		<h2>o</h2>
+		<h2 > Login con Facebook</h2>
+		<fb:login-button size="xlarge" scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+	</div>
+	<br><br>
+	<p align=center> Oppure <a href= "http://localhost:8080/register"> registrati </a> </p>
 </body>
+
 </html>
