@@ -107,7 +107,7 @@ app.post('/register', function(request, response) {
     var psw_check = request.body.psw2;
     if(psw!=psw_check){
       console.log("PASSWORD DIVERSE!!");
-      
+
       //response.redirect("/register");
     }
 
@@ -142,7 +142,7 @@ app.post('/register', function(request, response) {
                          });
                        });
                        console.log("REDIRECT INDEX");
-                       response.redirect("/index");
+                       response.redirect('/index');
                     }
                     console.log(doc);
                 });
