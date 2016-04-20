@@ -4,7 +4,7 @@ var express= require('express');
 var app=express();
 var ebay = require('ebay-api/index.js');
 var MongoClient = require('mongodb').MongoClient;
-//var assert = require('assert');
+var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 app.use(require('body-parser').json());
@@ -100,7 +100,62 @@ app.post('/index',function(request,response){
 	response.redirect('/index');
 });
 
+app.post('/register', function(request, response) {
+  //se è gia registrato reindirizza, altrimenti procedi con la registrazione
+    var email = request.body.email;
+    var psw = request.body.psw1;
+    var psw_check = request.body.psw2;
+    if(psw!=psw_check){
+      console.log("PASSWORD DIVERSE!!");
+      
+      //response.redirect("/register");
+    }
 
+    var findEmail = function(db, callback) {
+                var cursor = db.collection('Users').find({"_id":email});
+                  cursor.each(function(err, doc) {
+                    assert.equal(err, null);
+                    if (doc != null) {
+                      //GIA' REGISTRATO -> REDIRECT AL LOGIN
+                       console.log("GIA' REGISTRATO!");
+                       response.redirect("/access_page");
+                    } else {
+                      //NON PRESENTe -> FACCIO LA QUERY DI INSERIMENTO
+                       console.log("NON PRESENTE : REGISTRABILE");
+                       console.log("%s, %s", email, psw);
+                       var insertDoc = function(db, callback) {
+                           db.collection('Users').insertOne({
+                           "_id" : email,
+                           "psw":psw,
+                         }, function(err, result) {
+                           assert.equal(err,null);
+                           console.log("Inserted User in Users");
+                           callback();
+                         });
+                       };
+
+                       MongoClient.connect(url_mongo, function(err, db) {
+                         assert.equal(null,err);
+                         insertDoc(db, function(){
+                           console.log("INSERITO UTENTE");
+                           db.close();
+                         });
+                       });
+                       console.log("REDIRECT INDEX");
+                       response.redirect("/index");
+                    }
+                    console.log(doc);
+                });
+    };
+
+            MongoClient.connect(url_mongo, function(err, db) {
+              assert.equal(null, err);
+              findEmail(db, function() {
+                  console.log();
+                  db.close();
+              });
+            });
+});
 
 app.post('/access_page',function(request,response){
   console.log("post access page");

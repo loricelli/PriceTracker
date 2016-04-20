@@ -118,11 +118,12 @@ e scarica la Chrome App per utilizzarli direttamente dalla pagina del prodotto c
 
 <form name="url_in" action="/register" method="post" onsubmit="return check_form();">
 	<div align="center">
-		 username <input name="username" type="text" value="" required><br><br>
-		 email <input name="email" type="text" value="" required><br><br>
-		 password <input name="psw1" type="password" value="" required><br><br>
-		 verifica password <input name="psw2" type="password" value="" required><br><br>
-		<input type="submit" value="Registrati" >
+		 <table border=0>
+			 	<tr><td> email</td> <td> <input name="email" type="text" value="" required></td></tr>
+			 	<tr><td> password</td><td> <input name="psw1" type="password" value="" required></td></tr>
+			 	<tr><td>verifica password </td><td><input name="psw2" type="password" value="" required></td></tr>
+				<tr><td colspan="2"><center><input type="submit" value="Registrati" ></center></td></tr>
+		</table>
 	</div>
 </form>
 
