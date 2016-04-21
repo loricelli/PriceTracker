@@ -58,7 +58,7 @@ var findElement = function(db,data, callback) {
 
 };
 
-function find_person(data,callback){
+function find_person_reg(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
     findElement(db,data, function(doc) {
@@ -67,6 +67,38 @@ function find_person(data,callback){
         callback(1);
       });
       else callback(0);
+    });
+  });
+}
+
+function find_person_acc(data,callback){
+  MongoClient.connect(url_mongo, function(err, db) {
+    assert.equal(null, err);
+    findElement(db,data, function(doc) {
+      if(doc==0) callback(0);
+      else {
+        console.log("Elemento presente");
+        callback(1);
+      }
+    });
+  });
+}
+
+function find_password(data,callback){
+  MongoClient.connect(url_mongo, function(err, db) {
+    assert.equal(null, err);
+    var presence=0;
+    var cursor =db.collection('Usr').find( { "email": data.body.email ,"psw": data.body.psw1} );
+    cursor.limit(1).each(function(err, doc) {
+       assert.equal(err, null);
+       if(doc!=null){
+         presence=1;
+         db.close();
+         callback(presence);
+       }
+       else{
+         if(presence==0) callback(presence);
+       }
     });
   });
 }
@@ -125,7 +157,7 @@ app.post('/index',function(request,response){
 
 app.post('/register', function(request, response) {
   //se è gia registrato reindirizza, altrimenti procedi con la registrazione
-    find_person(request,function(out){
+    find_person_reg(request,function(out){
         if(out==0) {
           console.log("Elemento già registrato");
           response.redirect('/access_page');
@@ -136,8 +168,13 @@ app.post('/register', function(request, response) {
 
 app.post('/access_page',function(request,response){
   console.log("post access page");
-  add_person_to_db(url_mongo,request);
-  response.redirect('/index');
+  find_person_acc(request,function(ret){
+    if(ret==0) response.redirect('/register');
+    else find_password(request,function(ret){
+      if(ret==0) response.redirect('/access_page');
+      else response.redirect('/index');
+    });
+  });
 });
 
 app.post('/register',function(request,response){

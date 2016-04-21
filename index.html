@@ -9,7 +9,21 @@
 
 <body>
 
-
+<script>
+function createTable(){
+var tbody = '';
+ var theader = '<div><table >\n';
+		 for(u=0; u<=5; u++){
+				tbody += '<tr width="100%">';
+					tbody += '<td>';
+					tbody += '<a href="http://www.google.com">Google</a>';
+					tbody += '</td>'
+					tbody += '</tr>\n';
+					}
+var tfooter = '</table></div>';
+document.getElementById('products').innerHTML = theader + tbody + tfooter;
+}
+</script>
 
   <form name=url_in action="/index" method="post">
 		<div align=center>
@@ -17,12 +31,16 @@
     	<input name="url" type="text" value="" size="100%">
   		<input type="submit" value="Submit">
 		</div>
-		<div align=center>
-		</br>
-		</br>
-		</br>
-</div>
-	</form>
+	</form></br>
+	<table border=1 width="100%" height="100%">
+	<tr>
+		<td width="30%">
+				 Prodotti:<div id="products"> </div>
+		</td>
+		<td width="75%"> Pagine</td>
+	</tr>
+</table>
+<input  align="center" type="button" onclick="createTable()"; value="Clicca" width="200">
 </body>
 
 </html>
