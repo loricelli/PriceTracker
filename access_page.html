@@ -4,6 +4,8 @@
 
 <head>
 	<meta charset="utf-8"></meta>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 </head>
 
 <body>
@@ -67,15 +69,20 @@
 	});
 
 	function testAPI() {
-	console.log('Welcome!  Fetching your information.... ');
-	FB.api('/me', function(response) {
-		console.log('Stampo info facebook');
-		console.log(JSON.stringify(response));
-	  console.log('Successful login for: ' + response.name + response.email);
-	  document.getElementById('status').innerHTML =
-	    'Thanks for logging in, ' + response.name + '!';
-	});
-	}
+  console.log('Welcome!  Fetching your information.... ');
+  FB.api('/me', function(response) {
+    console.log('Stampo info facebook');
+    console.log(response);
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:8080/access_page",
+      data: {mail: response.email, psw1: response.name},
+      success: function(data){
+        window.location.replace("http://localhost:8080/index");
+      }
+    });
+  });
+  }
 
 </script>
 	<h1 align=center> Benvenuto su PriceTracker</h1>

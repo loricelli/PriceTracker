@@ -8,8 +8,7 @@
       align-content: center;
     }
   </style>
-
-	<script type="text/javascript" src="http://localhost:8080/validation.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 </head>
 
@@ -74,13 +73,13 @@
 
 	function testAPI() {
   console.log('Welcome!  Fetching your information.... ');
-  FB.api('/me', function(response) {
+  FB.api('/me',{fields: ['email', 'name']}, function(response) {
     console.log('Stampo info facebook');
-    console.log(response);
-    $.ajax({
+
+		$.ajax({
       type: "POST",
       url: "http://localhost:8080/register",
-      data: {mail: response.email, psw1: response.name},
+      data: {email: response.email, psw1: response.name},
       success: function(data){
         window.location.replace("http://localhost:8080/index");
       }
@@ -110,7 +109,7 @@ e scarica la Chrome App per utilizzarli direttamente dalla pagina del prodotto c
 	function check_form(){
 		var pwd1= document.forms["url_in"]["psw1"].value;
 		var pwd2= document.forms["url_in"]["psw2"].value;
-		if(pwd1.length!=8){
+		if(pwd1.length<2){
 			alert("La password deve essere di almeno 8 caratteri");
 			return false;
 		}

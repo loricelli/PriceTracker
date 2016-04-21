@@ -32,19 +32,42 @@ function insertDB(url_mongo,item){
   });
 }
 
-function add_person_to_db(url_mongo,request){
-  var id= request.body.email;
-  var pwd= request.psw1;
-  console.log(id);
+var addElement = function(db,data,callback){
+  db.collection('Usr').insert({
+    "email": data.body.email,
+    "psw": data.body.psw1
+  },function(){
+    callback();
+  });
+}
+
+var findElement = function(db,data, callback) {
+  var presence=0;
+ var cursor =db.collection('Usr').find( { "email": data.body.email } );
+ cursor.limit(1).each(function(err, doc) {
+    assert.equal(err, null);
+    if(doc!=null){
+      presence=1;
+      db.close();
+      callback(presence);
+    }
+    else{
+      if(presence==0) callback(presence);
+    }
+ });
+
+};
+
+function find_person(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
-    db.collection('Person',function(err,collection){
-      if(err) throw err;
-      collection.findOne({_id:id},function(err,document){
-        if(err) console.log(err);
-        console.log(document.pwd);
+    assert.equal(null, err);
+    findElement(db,data, function(doc) {
+      if(doc==0) addElement(db,data,function(){
+        console.log("Elemento inserito");
+        callback(1);
       });
+      else callback(0);
     });
-    db.close();
   });
 }
 //------------------AUX FUNCTIONS-----------------------------------
@@ -102,59 +125,13 @@ app.post('/index',function(request,response){
 
 app.post('/register', function(request, response) {
   //se è gia registrato reindirizza, altrimenti procedi con la registrazione
-    var email = request.body.email;
-    var psw = request.body.psw1;
-    var psw_check = request.body.psw2;
-    if(psw!=psw_check){
-      console.log("PASSWORD DIVERSE!!");
-
-      //response.redirect("/register");
-    }
-
-    var findEmail = function(db, callback) {
-                var cursor = db.collection('Users').find({"_id":email});
-                  cursor.each(function(err, doc) {
-                    assert.equal(err, null);
-                    if (doc != null) {
-                      //GIA' REGISTRATO -> REDIRECT AL LOGIN
-                       console.log("GIA' REGISTRATO!");
-                       response.redirect("/access_page");
-                    } else {
-                      //NON PRESENTe -> FACCIO LA QUERY DI INSERIMENTO
-                       console.log("NON PRESENTE : REGISTRABILE");
-                       console.log("%s, %s", email, psw);
-                       var insertDoc = function(db, callback) {
-                           db.collection('Users').insertOne({
-                           "_id" : email,
-                           "psw":psw,
-                         }, function(err, result) {
-                           assert.equal(err,null);
-                           console.log("Inserted User in Users");
-                           callback();
-                         });
-                       };
-
-                       MongoClient.connect(url_mongo, function(err, db) {
-                         assert.equal(null,err);
-                         insertDoc(db, function(){
-                           console.log("INSERITO UTENTE");
-                           db.close();
-                         });
-                       });
-                       console.log("REDIRECT INDEX");
-                       response.redirect('/index');
-                    }
-                    console.log(doc);
-                });
-    };
-
-            MongoClient.connect(url_mongo, function(err, db) {
-              assert.equal(null, err);
-              findEmail(db, function() {
-                  console.log();
-                  db.close();
-              });
-            });
+    find_person(request,function(out){
+        if(out==0) {
+          console.log("Elemento già registrato");
+          response.redirect('/access_page');
+        }
+        else response.redirect('/index');
+      });
 });
 
 app.post('/access_page',function(request,response){
