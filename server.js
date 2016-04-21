@@ -9,6 +9,11 @@ var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
+app.use(express.static(__dirname));
+const crypto=require('crypto');
+const secret='lucascemo';
+
+
 //------------------AUX FUNCTIONS-----------------------------------
 function parseUrl(url){
   var parse_url= url.toString().split("/");
@@ -21,7 +26,8 @@ function insertDB(url_mongo,item){
     db.collection('Items',function(err,collection){
       if(err) throw err;
       collection.insert({
-        "_id": item.Item.ItemID,
+        "email": "lorenzo",
+        "itemId": item.Item.ItemID,
         "Title": item.Item.Title,
         "Price": item.Item.ConvertedCurrentPrice.amount
       },function(){
@@ -33,7 +39,13 @@ function insertDB(url_mongo,item){
 }
 
 var addElement = function(db,data,callback){
-  db.collection('Usr').insert({
+    const cipher=crypto.createCipher('aes192',secret);
+  var pswEncrypted=cipher.update(data.body.psw1,'utf8','hex');
+  pswEncrypted+=cipher.final('hex');
+  console.log(pswEncrypted+" è la password criptata in aes192");
+  console.log("la password in request è : "+data.body.psw1);
+  data.body.psw1=pswEncrypted;
+  db.collection('Users').insert({
     "email": data.body.email,
     "psw": data.body.psw1
   },function(){
@@ -43,7 +55,7 @@ var addElement = function(db,data,callback){
 
 var findElement = function(db,data, callback) {
   var presence=0;
- var cursor =db.collection('Usr').find( { "email": data.body.email } );
+ var cursor =db.collection('Users').find( { "email": data.body.email } );
  cursor.limit(1).each(function(err, doc) {
     assert.equal(err, null);
     if(doc!=null){
@@ -88,7 +100,7 @@ function find_password(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
     var presence=0;
-    var cursor =db.collection('Usr').find( { "email": data.body.email ,"psw": data.body.psw1} );
+    var cursor =db.collection('Users').find( { "email": data.body.email ,"psw": data.body.psw1} );
     cursor.limit(1).each(function(err, doc) {
        assert.equal(err, null);
        if(doc!=null){
@@ -110,11 +122,29 @@ app.get('/', function(request,response){ //carica la pagina
   response.redirect('/access_page');
   //fs.createReadStream("./access_page.html").pipe(response);
 });
+app.get('/data', function(req, res){
 
+  var email="lorenzo";
+  var elems= new Array();
+  MongoClient.connect(url_mongo, function(err, db) {
+    db.collection('Items',function(err,collection){
+      if(err) throw err;
+      var cursor =db.collection('Items').find( { "email": email} );
+      cursor.each(function(err, doc) {
+        if(doc!=null){
+          elems.push(doc);
+          console.log(elems);
+        }
+        else res.send(elems);
+    });
+    });
+  });
+
+});
 app.get('/index', function(request,response){ //carica la pagina
 	response.writeHead(200, {"Content-type": "text/html"});
 	console.log("index get");
-  //response.redirect('/index');
+  //response.redirect('/index')
   fs.createReadStream("./index.html").pipe(response);
 });
 
@@ -168,10 +198,16 @@ app.post('/register', function(request, response) {
 
 app.post('/access_page',function(request,response){
   console.log("post access page");
+  const cipher=crypto.createCipher('aes192',secret);
+  var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
+  pswEncrypted+=cipher.final('hex');
+  //console.log(pswEncrypted+" è la password criptata in aes192");
+  //console.log("la password in request è : "+request.body.psw1);
+  request.body.psw1=pswEncrypted;
   find_person_acc(request,function(ret){
     if(ret==0) response.redirect('/register');
     else find_password(request,function(ret){
-      if(ret==0) response.redirect('/access_page');
+      if(ret==0) response.redirect('/access_page/?error');
       else response.redirect('/index');
     });
   });
