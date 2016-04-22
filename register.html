@@ -17,20 +17,25 @@
 <body>
 <script>
 
-function check_form(){
-	var psw1= document.forms["url_in"]["psw1"].value;
-	var psw2= document.forms["url_in"]["psw2"].value;
-  if(pwd1.length<2){
+function check_form(documento){
+	var psw1= documento.url_in.psw1.value;
+	var psw2= documento.url_in.psw2.value;
+	if(psw1==psw2){ //match
+    return true;
+  }
+  if(psw1.length<2 && psw2.length<2){
     alert("La password deve essere di almeno 8 caratteri");
     return false;
   }
-	else if(!(psw1==psw2)){
-    alert("Le due password non coincidono");
-    return false;
+	/*
+	if(psw1==psw2){
+    alert("Le due password coincidono");
+    return true;
   }
-  else{
-		return true;
-	}
+		return false;
+	*/
+	alert("Le due password not coincidono. It's very brutto! Yo BD");
+	return false;
 }
 
 </script>
@@ -52,7 +57,7 @@ e scarica la Chrome App per utilizzarli direttamente dalla pagina del prodotto c
 <h2>REGISTRAZIONE</h1>
 <h3 > inserisci username email e password per regstrarti:</h3>
 
-<form name="url_in" action="/register" method="post" onsubmit="return check_form();">
+<form name="url_in" action="/register" method="post" onsubmit="return(check_form(document));">
 	<div align="center">
 		 <table border=0>
 			 	<tr><td> email</td> <td> <input name="email" type="text" value="" required></td></tr>

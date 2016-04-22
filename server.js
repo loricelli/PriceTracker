@@ -11,7 +11,7 @@ var session = require('express-session');
 
 //per la sessione
 app.use(session({secret: 'francescocoatto'}));
-app.engine('html', require('ejs').renderFile);
+//app.engine('html', require('ejs').renderFile);
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
 app.use(express.static(__dirname+'/images'));
@@ -23,10 +23,17 @@ const secret='lucascemo';
 
 
 //------------------AUX FUNCTIONS-----------------------------------
+
 function parseUrl(url){
-  var parse_url= url.toString().split("/");
-  var item_id= parse_url[5].toString().split("?")[0];
-  return item_id;
+  console.log("RE check :"+url+"...");
+  var pattern = new RegExp('([0-9]{12}){1}');
+  var id = url.match(pattern);
+  if(id==null || id.length==0){
+    return null;
+  }
+  console.log("id: "+id[0]);
+  if(id.length>1) return id[0];
+  return id;
 }
 
 function insertDB(url_mongo, item, req){
@@ -202,26 +209,24 @@ app.get('/access_page', function(request,response){ //carica la pagina
 
 
 app.post('/index',function(request,response){
-
 	console.log("post index");
   var item_id= parseUrl(request.body.url);
 
   ebay.xmlRequest({
-  'serviceName': 'Shopping',
-  'opType': 'GetSingleItem',
-  'appId': 'LorenzoR-PriceTra-PRD-2e805b337-56dc7eec',      // FILL IN YOUR OWN APP KEY, GET ONE HERE: https://publisher.ebaypartnernetwork.com/PublisherToolsAPI
-  params: {
-    'ItemId': item_id    // FILL IN A REAL ItemID
-    }
+      'serviceName': 'Shopping',
+      'opType': 'GetSingleItem',
+      'appId': 'LorenzoR-PriceTra-PRD-2e805b337-56dc7eec',      // FILL IN YOUR OWN APP KEY, GET ONE HERE: https://publisher.ebaypartnernetwork.com/PublisherToolsAPI
+      params: {
+        'ItemId': item_id    // FILL IN A REAL ItemID
+        }
   },
   function(error, item) {
-    console.log(item);
-    insertDB(url_mongo,item,request);
-    console.log("\n");
-    console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
-
+    //console.log(item);
+      insertDB(url_mongo,item,request);
+      //console.log("\n");
+      console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
   });
-	response.render('index.html');
+	response.redirect('back');
 });
 
 app.post('/register', function(request, response) {
