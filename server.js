@@ -9,7 +9,8 @@ var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
-app.use(express.static(__dirname));
+app.use(express.static(__dirname+'/images'));
+app.use(express.static(__dirname+'/modules'));
 const crypto=require('crypto');
 const secret='lucascemo';
 
