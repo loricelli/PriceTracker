@@ -7,12 +7,19 @@ var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
+var session = require('express-session');
+
+//per la sessione
+app.use(session({secret: 'francescocoatto'}));
+app.engine('html', require('ejs').renderFile);
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
 app.use(express.static(__dirname+'/images'));
 app.use(express.static(__dirname+'/modules'));
+app.set('views', __dirname);
 const crypto=require('crypto');
 const secret='lucascemo';
+
 
 
 //------------------AUX FUNCTIONS-----------------------------------
@@ -22,12 +29,13 @@ function parseUrl(url){
   return item_id;
 }
 
-function insertDB(url_mongo,item){
+function insertDB(url_mongo, item, req){
+  ses = req.session;
   MongoClient.connect(url_mongo, function(err, db) {
     db.collection('Items',function(err,collection){
       if(err) throw err;
       collection.insert({
-        "email": "lorenzo",
+        "email": ses.email,
         "itemId": item.Item.ItemID,
         "Title": item.Item.Title,
         "Price": item.Item.ConvertedCurrentPrice.amount
@@ -116,6 +124,17 @@ function find_password(data,callback){
   });
 }
 //------------------AUX FUNCTIONS-----------------------------------
+app.get('/logout',function(req,res){
+  req.session.destroy(function(err) {
+    if(err) {
+      console.log(err);
+    }
+    else {
+      console.log("Logged out");
+      res.redirect('/access_page');
+    }
+  });
+});
 
 app.get('/', function(request,response){ //carica la pagina
 	//response.writeHead(200, {"Content-type": "text/html"});
@@ -123,30 +142,48 @@ app.get('/', function(request,response){ //carica la pagina
   response.redirect('/access_page');
   //fs.createReadStream("./access_page.html").pipe(response);
 });
-app.get('/data', function(req, res){
 
-  var email="lorenzo";
-  var elems= new Array();
-  MongoClient.connect(url_mongo, function(err, db) {
-    db.collection('Items',function(err,collection){
-      if(err) throw err;
-      var cursor =db.collection('Items').find( { "email": email} );
-      cursor.each(function(err, doc) {
-        if(doc!=null){
-          elems.push(doc);
-          console.log(elems);
-        }
-        else res.send(elems);
-    });
-    });
-  });
-
+app.get('/errorNotLogged', function(request,response){ //carica la pagina
+	response.writeHead(500, {"Content-type": "text/html"});
+	console.log("error not logged user");
+  fs.createReadStream("./errorNotLogged.html").pipe(response);
 });
+
+app.get('/data', function(req, res){
+  ses = req.session;
+  if(ses.logged){
+      var email=ses.email;
+      var elems= new Array();
+      MongoClient.connect(url_mongo, function(err, db) {
+        db.collection('Items',function(err,collection){
+          if(err) throw err;
+          var cursor =db.collection('Items').find( { "email": email} );
+          cursor.each(function(err, doc) {
+            if(doc!=null){
+              elems.push(doc);
+              //console.log(elems);
+            }
+            else{
+              res.send(elems);
+            }
+        });
+        });
+      });
+  }
+  else{
+    res.redirect('/errorNotLogged');
+  }
+});
+
+
 app.get('/index', function(request,response){ //carica la pagina
-	response.writeHead(200, {"Content-type": "text/html"});
-	console.log("index get");
-  //response.redirect('/index')
-  fs.createReadStream("./index.html").pipe(response);
+  ses = request.session;
+  if(ses.logged){
+      response.writeHead(200, {"Content-type": "text/html"});
+    	console.log("index get");
+      //response.redirect('/index')
+      fs.createReadStream("./index.html").pipe(response);
+  }
 });
 
 app.get('/register', function(request,response){ //carica la pagina
@@ -179,43 +216,64 @@ app.post('/index',function(request,response){
   },
   function(error, item) {
     console.log(item);
-    insertDB(url_mongo,item);
+    insertDB(url_mongo,item,request);
     console.log("\n");
     console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
+
   });
-	response.redirect('/index');
+	response.render('index.html');
 });
 
 app.post('/register', function(request, response) {
+  ses = request.session;
   //se è gia registrato reindirizza, altrimenti procedi con la registrazione
     find_person_reg(request,function(out){
         if(out==0) {
           console.log("Elemento già registrato");
           response.redirect('/access_page');
         }
-        else response.redirect('/index');
+        else{
+          ses.email = request.body.email;
+          ses.logged=true;
+          response.redirect('/index');
+        }
       });
 });
 
 app.post('/access_page',function(request,response){
   console.log("post access page");
+
   const cipher=crypto.createCipher('aes192',secret);
   var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
   pswEncrypted+=cipher.final('hex');
   //console.log(pswEncrypted+" è la password criptata in aes192");
   //console.log("la password in request è : "+request.body.psw1);
   request.body.psw1=pswEncrypted;
+  ses = request.session;
+
   find_person_acc(request,function(ret){
-    if(ret==0) response.redirect('/register');
-    else find_password(request,function(ret){
-      if(ret==0) response.redirect('/access_page/?error');
-      else response.redirect('/index');
-    });
+    if(ret==0){
+      response.redirect('/register');
+    }
+    else{
+      find_password(request,function(ret){
+        if(ret==0){
+          response.redirect('/access_page/?error');
+        }
+        else{
+          //variabili di sessione inizializzate
+            ses.email=request.body.email;
+            ses.logged = true;
+            //res.end('done');
+            response.redirect('/index');
+        }
+      });
+    }
   });
 });
 
-app.post('/register',function(request,response){
 
+app.post('/register',function(request,response){
     console.log("register post");
     response.redirect('/index');
 });
