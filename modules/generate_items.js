@@ -13,6 +13,4 @@ function generateItems(){
     var tfooter = '</table></div>';
     document.getElementById('products').innerHTML = theader + tbody + tfooter;
     });
-console.log("fatta get");
-
 }

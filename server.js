@@ -225,8 +225,9 @@ app.post('/index',function(request,response){
       insertDB(url_mongo,item,request);
       //console.log("\n");
       console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
-  });
-	response.redirect('back');
+      response.redirect('back');
+    });
+
 });
 
 app.post('/register', function(request, response) {
@@ -269,7 +270,6 @@ app.post('/access_page',function(request,response){
           //variabili di sessione inizializzate
             ses.email=request.body.email;
             ses.logged = true;
-            //res.end('done');
             response.redirect('/index');
         }
       });
