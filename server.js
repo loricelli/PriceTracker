@@ -178,6 +178,32 @@ app.get('/data', function(req, res){
   }
 });
 
+app.get('/data/:item', function(req, res){
+  ses = req.session;
+  console.log("item id get");
+  if(ses.logged){
+    var id = req.params.item;
+    console.log("In data/item");
+      var email=ses.email;
+      MongoClient.connect(url_mongo, function(err, db) {
+        db.collection('Items',function(err,collection){
+          if(err) throw err;
+          var cursor = db.collection('Items').find( { "email": email, "itemId" : id} );
+          cursor.limit(1).each(function(err, doc) {
+
+            if(doc!=null){
+              res.send(doc);
+              console.log("In data/ite -- doc: "+doc);
+              //console.log(elems);
+            }
+          });
+        });
+      });
+  }
+  else{
+    res.redirect('/errorNotLogged');
+  }
+});
 
 app.get('/index', function(request,response){ //carica la pagina
   ses = request.session;
@@ -235,7 +261,7 @@ app.post('/register', function(request, response) {
     console.log(pswEncrypted+" è la password criptata in aes192");
     console.log("la password in request è : "+request.body.psw1);
     request.body.psw1=pswEncrypted;
-    
+
     find_person_reg(request,function(out){
         if(out==0) {
           console.log("Elemento già registrato");

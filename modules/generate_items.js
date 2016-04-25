@@ -3,6 +3,7 @@
 function generateItems(){
   $.get("http://localhost:8080/data", function(data){
     var tbody = '';
+    var singleItem;
      var theader = '<div><table width="100%" class="prods"><th class="prods" colspan="3">Prodotti</th>\n';
          for(i=0; i<data.length; i++){
               tbody += '<tr style="vertical-align:middle;" width="100%" class="prods">';
@@ -13,8 +14,9 @@ function generateItems(){
               tbody += data[i].Title.toLowerCase().substring(0,25) +".." ;
               tbody += '</td>';
               tbody += '<td class="prods">';
-              tbody += '<input align="center" type="image" src="/cart-32.png" name="all"/>';
-              tbody += '</td>'
+              singleItem = JSON.stringify(data[i].itemId);
+              tbody += '<input align="center" type="image" src="/cart-32.png" name="all" onclick="getItemData('+singleItem.replace(/\"/g, "")+');"/>';
+              tbody += '</td>';
               tbody += '</tr>\n';
 
          }
@@ -36,4 +38,17 @@ function prova(id){
       }
     });
   }
+}
+
+function getItemData(item){
+  $.get("http://localhost:8080/data/"+item,function(data){
+     var htmlProd = '<table style="width:80%;">';
+     for(var el in data){
+       var lookup = el.toString();
+       htmlProd += "<tr><td>"+el+": "+data[el]+"</td></tr>"
+     }
+     //htmlProd += JSON.stringify(data);
+     htmlProd += '</table>';
+      document.getElementById("specs").innerHTML = htmlProd;
+  });
 }
