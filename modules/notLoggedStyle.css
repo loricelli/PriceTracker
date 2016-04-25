@@ -1,0 +1,27 @@
+body{
+  font-family: arial;
+  font-size: 12pt;
+  background-color: #AAA;
+  color: white;
+  height: auto;
+}
+
+a{
+  color: #FFF;
+  text-decoration: none;
+}
+a:hover{
+  color: #4CAF50;
+}
+div{
+  width: 75%;
+  margin: auto auto  auto auto;
+  border-top: 4px solid #4CAF50;
+  border-bottom: 4px solid #4CAF50;
+}
+span{
+  color: #4CAF50;
+}
+h1{
+  text-decoration: underline;
+}

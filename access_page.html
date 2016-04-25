@@ -8,6 +8,14 @@
 	<script src="fb.js" type="text/javascript"></script>
 	<script src="access_util.js" type="text/javascript"></script>
 	<title>Accedi</title>
+	<link rel="stylesheet" type="text/css" href="modules/generic.css" />
+	<link rel="stylesheet" type="text/css" href="modules/access_pageStyle.css" />
+	<style>
+   @import url(generic.css);
+  </style>
+	<style>
+   @import url(access_pageStyle.css);
+  </style>
 </head>
 
 <body onload="messaggioErrore()">
@@ -19,29 +27,27 @@
 		urlP = urlq[1];
 		if(urlP!=null) alert("password errata! ");
 	}
-
 </script>
-	<h1 align=center> Benvenuto su PriceTracker</h1>
-
+	<div class="container">
+ <div id="headerText">
+	<h1> Benvenuto su Price<span class="mark">Tracker</span></h1>
   <h3>Cosa è PriceTracker?</h3>
-
-  <p>PriceTracker è un servizio per eBay che ti permette di monitorare il costo del prodotto che desideri.
+  <p class="desc">Price<span class="mark">Tracker</span> è un servizio per eBay che ti permette di monitorare il costo del prodotto che desideri.
    Tutto quello che devi fare è incollare il link del prodotto e specificare il prezzo al quale lo compreresti.
   Penseremo noi ad avvertirti quando il prezzo del prodotto sarà sceso fino a raggiungere quello che hai chiesto.
   </p>
-
-  <h3>Esegui il login per accedere ai nostri servizi
+  <h3 class="desc">Esegui il login per accedere ai nostri servizi
   e scarica la Chrome App per utilizzarli direttamente dalla pagina del prodotto che stai vedendo.</h3>
-	<h1 align="center" style="font-family: Comfortaa, cursive;"><span style="font-size: 22px;"> ACCEDI</span></h1>
-	<h3 style="font-size: 22px;" align="center">Esegui il login per accedere ai nostri servizi</h3>
+</div>
+	<table id="accesso">
+		<tr><th>ACCEDI</th></tr>
+		<form name="login" align="center" style="font-size: 18px;" action="/access_page" method="post">
+				<tr><td> <input type="text"  name="email"  value="" placeholder="e-mail" class="in"> </td></tr>
+				<tr><td> <input type="password" name="psw1" value="" placeholder="password" class="in"> </td></tr>
+				<tr><td> <input type="submit" value="Accedi" id="loginBut"> </td></tr>
 
-	<form name="login" align="center" style="font-size: 18px;" action="/access_page" method="post">
-				email <input type="text"  name="email"  value="" ><br><br>
-				password <input name="psw1" type="password" value=""><br><br>
-
-				<input type="submit" value="Registrati">
 	</form>
-
+</table>
 	<div align="center" style="font-size: 18px;">
 		<h2>o</h2>
 		<h2 > Login con Facebook</h2>
@@ -49,6 +55,7 @@
 	</div>
 	<br><br>
 	<p align=center> Oppure <a href= "http://localhost:8080/register"> registrati </a> </p>
+</div>
 </body>
 
 </html>

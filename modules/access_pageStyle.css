@@ -1,0 +1,64 @@
+.container{
+  background-color: #999;
+  border: 0;
+  border-collapse: collapse;
+  padding: 0px;
+  margin: auto;
+  width: 80%;
+}
+#headerText{
+  position: relative;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 10pt;
+  text-align: center;
+}
+#accesso{
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10pt;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 4px 8px 0 rgba(0,0,0,0.19);
+  background-color: #DCDCDC;
+}
+td{
+    padding: 10px;
+}
+th{
+  font-size: 18pt;
+  font-weight: lighter;
+  color: #4CAF50;
+}
+.in{
+  height: 20pt;
+  font-size: 16pt;
+  width: 100%;
+  border: 3px solid #DCDCDC;
+}
+input[type=text]:focus {
+    border: 3px solid #4CAF50;
+}
+input[type=password]:focus {
+    border: 3px solid #4CAF50;
+}
+#loginBut{
+  width: 100%;
+  height: 20pt;
+  font-size: 16pt;
+  background-color: white;
+  color: #999;
+  border: 0;
+}
+#loginBut:hover{
+  background-color: #4CAF50;
+  color:white;
+}
+.desc{
+  text-align: justify;
+}
+.mark{
+  color:#444;
+  text-shadow:  2px 2px #AAA;
+}

@@ -8,24 +8,27 @@
 	<script src="generate_items.js" type="text/javascript"></script>
 	<title>I tuoi prodotti</title>
 	<meta charset="UTF-8">
-	<script>
 
-	function checkSearch(url){
-		//controlla se l'url fa parte del dominio
-		if(url==null || url.length==0 || url.search("www.ebay.it")<0){
-			window.alert("Inserire URL valida!");
-			return false;
+	<style>
+   @import url(indexStyle.css);
+  </style>
+
+	<script type="text/javascript">
+		function checkSearch(url){
+			//controlla se l'url fa parte del dominio
+			if(url==null || url.length==0 || url.search("www.ebay.it")<0){
+				window.alert("Inserire URL valida!");
+				return false;
+			}
+			//idEBAY : 12 caratteri numerici ([0-9]{12}){1}
+			var pattern = new RegExp('([0-9]{12}){1}');
+			var id = url.match(pattern);
+
+			if(id==null || id.length==0){
+				return false;
+			}
+			return true;
 		}
-		//idEBAY : 12 caratteri numerici ([0-9]{12}){1}
-		var pattern = new RegExp('([0-9]{12}){1}');
-		var id = url.match(pattern);
-
-		if(id==null || id.length==0){
-			return false;
-		}
-		return true;
-	}
-
 	</script>
 
 
@@ -34,23 +37,31 @@
 <body onload="generateItems();">
 
 <div align=center>
-	<h3>Inserisci qui l'url del prodotto</h3>
+	<h3 class="header">Inserisci qui l'url del prodotto</h3>
   <form name=url_in action="/index" method="post" onsubmit="return (checkSearch(document.url_in.url.value));">
-    	<input name="url" type="text" value="" size="100%">
-  		<input type="submit" value="Add">
+    	<input name="url" type="text" value="" size="100%" placeholder="URL" id="searchBar">
+  		<input type="submit" value="Add" id="add" />
 	</form>
 </div>
 	</br>
-	<table border=1 width="100%" height="100%">
+	<table height="100%" class="container">
 	<tr>
-		<td width="30%">
-				 Prodotti:<div id="products"> </div>
+		<td width="30%" class="container">
+				 <div id="products"> </div>
 		</td>
-		<td width="75%"> Pagine</td>
+		<td width="75%" class="container"> Pagine</td>
 	</tr>
 </table>
-<a href="/logout" align=right>logout</a>
-
+<div class="footer">
+	<table width=100% height=100% class="footer">
+		<tr>
+			<td class="footer"><a href="/errorNotLogged" class="bottomer" >primo</a></td>
+			<td class="footer"><a href="/errorNotLogged" class="bottomer" >secondo</a></td>
+			<td class="footer"><a href="/errorNotLogged" class="bottomer" >terzo</a></td>
+			<td class="footer"><a href="/logout" class="bottomer">logout</a></td>
+		</tr>
+	</table>
+</div>
 </body>
 
 </html>

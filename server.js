@@ -42,13 +42,13 @@ function insertDB(url_mongo, item, req){
     db.collection('Items',function(err,collection){
       if(err) throw err;
       collection.insert({
-        "email": ses.email,
-        "itemId": item.Item.ItemID,
-        "Title": item.Item.Title,
-        "Price": item.Item.ConvertedCurrentPrice.amount
+          "email": ses.email,
+          "itemId": item.Item.ItemID,
+          "Title": item.Item.Title,
+          "Price": item.Item.ConvertedCurrentPrice.amount
       },function(){
-        console.log("Elemento inserito");
-      });
+          console.log("Elemento inserito");
+     });
     });
     db.close();
   });
