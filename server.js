@@ -55,12 +55,7 @@ function insertDB(url_mongo, item, req){
 }
 
 var addElement = function(db,data,callback){
-    const cipher=crypto.createCipher('aes192',secret);
-  var pswEncrypted=cipher.update(data.body.psw1,'utf8','hex');
-  pswEncrypted+=cipher.final('hex');
-  console.log(pswEncrypted+" è la password criptata in aes192");
-  console.log("la password in request è : "+data.body.psw1);
-  data.body.psw1=pswEncrypted;
+
   db.collection('Users').insert({
     "email": data.body.email,
     "psw": data.body.psw1
@@ -117,6 +112,7 @@ function find_password(data,callback){
     assert.equal(null, err);
     var presence=0;
     var cursor =db.collection('Users').find( { "email": data.body.email ,"psw": data.body.psw1} );
+    console.log("email"+ data.body.email +" psw "+ data.body.psw1);
     cursor.limit(1).each(function(err, doc) {
        assert.equal(err, null);
        if(doc!=null){
@@ -233,6 +229,13 @@ app.post('/index',function(request,response){
 app.post('/register', function(request, response) {
   ses = request.session;
   //se è gia registrato reindirizza, altrimenti procedi con la registrazione
+    const cipher=crypto.createCipher('aes192',secret);
+    var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
+    pswEncrypted+=cipher.final('hex');
+    console.log(pswEncrypted+" è la password criptata in aes192");
+    console.log("la password in request è : "+request.body.psw1);
+    request.body.psw1=pswEncrypted;
+    
     find_person_reg(request,function(out){
         if(out==0) {
           console.log("Elemento già registrato");
@@ -259,15 +262,30 @@ app.post('/access_page',function(request,response){
 
   find_person_acc(request,function(ret){
     if(ret==0){
-      response.redirect('/register');
+      if(request.body.fb=='Y'){
+        MongoClient.connect(url_mongo, function(err, db) {
+          assert.equal(null, err);
+          addElement(db,request,function(){
+            ses.email=request.body.email;
+            ses.logged = true;
+            response.redirect('/index');
+          });
+        });
+      }
+      else {
+        response.redirect('/register');
+      }
     }
     else{
+      console.log("Verifico password");
       find_password(request,function(ret){
         if(ret==0){
+          console.log("Password errata");
           response.redirect('/access_page/?error');
         }
         else{
           //variabili di sessione inizializzate
+          console.log("Password giusta");
             ses.email=request.body.email;
             ses.logged = true;
             response.redirect('/index');
@@ -283,6 +301,10 @@ app.post('/register',function(request,response){
     response.redirect('/index');
 });
 
+app.post('/delete_elem',function(req,res){
+  var elem_tbd= req.body.elem.split('_')[1];
+  console.log(elem_tbd);
+});
 app.listen(8080);
 console.log("server is running.....");
 
