@@ -36,6 +36,8 @@ function parseUrl(url){
   return id;
 }
 
+
+//TODO: update su array degli elementi dell'utente
 function insertDB(url_mongo, item, req){
   ses = req.session;
   MongoClient.connect(url_mongo, function(err, db) {
@@ -53,9 +55,8 @@ function insertDB(url_mongo, item, req){
     db.close();
   });
 }
-
+//TODO: aggiungere flag facebook
 var addElement = function(db,data,callback){
-
   db.collection('Users').insert({
     "email": data.body.email,
     "psw": data.body.psw1
@@ -64,6 +65,7 @@ var addElement = function(db,data,callback){
   });
 }
 
+//TODO: ristruttare con nuovo database
 var findElement = function(db,data, callback) {
   var presence=0;
  var cursor =db.collection('Users').find( { "email": data.body.email } );
@@ -80,6 +82,7 @@ var findElement = function(db,data, callback) {
  });
 
 };
+//TODO: ristruttare con nuovo database
 
 function find_person_reg(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
@@ -93,6 +96,7 @@ function find_person_reg(data,callback){
     });
   });
 }
+//TODO: ristruttare con nuovo database
 
 function find_person_acc(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
@@ -106,6 +110,7 @@ function find_person_acc(data,callback){
     });
   });
 }
+//TODO: ristruttare con nuovo database
 
 function find_password(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
@@ -152,6 +157,8 @@ app.get('/errorNotLogged', function(request,response){ //carica la pagina
   fs.createReadStream("./errorNotLogged.html").pipe(response);
 });
 
+//TODO: ristruttare con nuovo database
+
 app.get('/data', function(req, res){
   ses = req.session;
   if(ses.logged){
@@ -178,6 +185,7 @@ app.get('/data', function(req, res){
   }
 });
 
+//TODO: ristruttare con nuovo database
 app.get('/data/:item', function(req, res){
   ses = req.session;
   console.log("item id get");
@@ -190,11 +198,9 @@ app.get('/data/:item', function(req, res){
           if(err) throw err;
           var cursor = db.collection('Items').find( { "email": email, "itemId" : id} );
           cursor.limit(1).each(function(err, doc) {
-
             if(doc!=null){
               res.send(doc);
               console.log("In data/ite -- doc: "+doc);
-              //console.log(elems);
             }
           });
         });
@@ -245,7 +251,6 @@ app.post('/index',function(request,response){
   function(error, item) {
     //console.log(item);
       insertDB(url_mongo,item,request);
-      //console.log("\n");
       console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
       response.redirect('back');
     });
@@ -274,6 +279,8 @@ app.post('/register', function(request, response) {
         }
       });
 });
+
+//TODO: ristruttare con nuovo database
 
 app.post('/access_page',function(request,response){
   console.log("post access page");
@@ -326,10 +333,18 @@ app.post('/register',function(request,response){
     console.log("register post");
     response.redirect('/index');
 });
-
+//TODO: DA FARE DELETE ELEMENT
 app.post('/delete_elem',function(req,res){
   var elem_tbd= req.body.elem.split('_')[1];
   console.log(elem_tbd);
+  MongoClient.connect(url_mongo, function(err, db) {
+    assert.equal(null, err);
+    var cursor = db.collection('us').find( { "_id": "email"} );
+    cursor.limit(1).each(function(err, doc) {
+      if(doc!=null)console.log(doc.products[0].price[0].value);
+    });
+  });
+
 });
 app.listen(8080);
 console.log("server is running.....");

@@ -1,0 +1,34 @@
+{
+  "email": "email",
+  "psw": "password",
+  "fb": "n",
+  "products":[
+    {
+      "name": "prodotto2",
+      "itemId": "p_02",
+      "link": "url_2",
+      "target_price": "57",
+      "price":[
+        {
+          "timestamp":"timestamp",
+          "value":"79"
+        }
+      ]
+    }
+  ]
+}
+
+db.us.update({"_id": "email"},{$push: {
+  products: {
+    "name": "prodotto2",
+    "itemId": "p_02",
+    "link": "url_2",
+    "target_price": "57",
+    "price":[
+      {
+        "timestamp":"timestamp",
+        "value":"79"
+      }
+    ]
+  }
+  }})
