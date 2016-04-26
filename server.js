@@ -1,4 +1,3 @@
-//var bodyParser= require("body-parser");///usr/lib
 var fs= require('fs');
 var express= require('express');
 var app=express();
