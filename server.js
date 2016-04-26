@@ -66,7 +66,7 @@ var addElement = function(db,data,callback){
 }
 
 //TODO: ristruttare con nuovo database
-var findElement = function(db,data, callback) {
+var findUser = function(db,data, callback) { //user
   var presence=0;
  var cursor =db.collection('Users').find( { "email": data.body.email } );
  cursor.limit(1).each(function(err, doc) {
@@ -82,35 +82,23 @@ var findElement = function(db,data, callback) {
  });
 
 };
-//TODO: ristruttare con nuovo database
 
-function find_person_reg(data,callback){
+function findUserInsert(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
-    findElement(db,data, function(doc) {
-      if(doc==0) addElement(db,data,function(){
-        console.log("Elemento inserito");
-        callback(1);
-      });
-      else callback(0);
-    });
-  });
-}
-//TODO: ristruttare con nuovo database
-
-function find_person_acc(data,callback){
-  MongoClient.connect(url_mongo, function(err, db) {
-    assert.equal(null, err);
-    findElement(db,data, function(doc) {
-      if(doc==0) callback(0);
-      else {
-        console.log("Elemento presente");
-        callback(1);
+    findUser(db,data, function(doc) {
+      if(doc==0){
+        addElement(db,data,function(){
+          console.log("Elemento inserito");
+          callback(1); //se non c'era e inserito
+        });
+      }
+      else{
+        callback(0); //c'è non va inserito
       }
     });
   });
 }
-//TODO: ristruttare con nuovo database
 
 function find_password(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
@@ -267,12 +255,12 @@ app.post('/register', function(request, response) {
     console.log("la password in request è : "+request.body.psw1);
     request.body.psw1=pswEncrypted;
 
-    find_person_reg(request,function(out){
-        if(out==0) {
+    findUserInsert(request,function(out){
+        if(out==0) { //0 se è gia presente
           console.log("Elemento già registrato");
           response.redirect('/access_page');
         }
-        else{
+        else{ //1 se
           ses.email = request.body.email;
           ses.logged=true;
           response.redirect('/index');
@@ -293,8 +281,8 @@ app.post('/access_page',function(request,response){
   request.body.psw1=pswEncrypted;
   ses = request.session;
 
-  find_person_acc(request,function(ret){
-    if(ret==0){
+  findUserInsert(request,function(ret){
+    if(ret==1){
       if(request.body.fb=='Y'){
         MongoClient.connect(url_mongo, function(err, db) {
           assert.equal(null, err);
