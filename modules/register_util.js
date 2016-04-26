@@ -6,7 +6,7 @@ FB.api('/me',{fields: ['email', 'name']}, function(response) {
   $.ajax({
     type: "POST",
     url: "http://localhost:8080/register",
-    data: {email: response.email, psw1: response.name},
+    data: {email: response.email, psw1: response.name, fb: "Y"},
     success: function(data){
       window.location.replace("http://localhost:8080/index");
     }

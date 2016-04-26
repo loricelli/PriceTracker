@@ -38,10 +38,31 @@ function parseUrl(url){
 
 
 //TODO: update su array degli elementi dell'utente
-function insertDB(url_mongo, item, req){
+function insert_element(url_mongo, item, req){
   ses = req.session;
   MongoClient.connect(url_mongo, function(err, db) {
-    db.collection('Items',function(err,collection){
+    console.log(ses.email);
+    db.collection('Users',function(err,collection){
+      if(err) throw err;
+      collection.update({"email": ses.email},{$push: {
+        products: {
+          "name": item.Item.Title,
+          "itemId": item.Item.ItemID,
+          "img": item.Item.PictureURL,
+          "link": "url_2",
+          "target_price": "57",
+          "price":[
+            {
+              "timestamp":item.Timestamp,
+              "value":item.Item.ConvertedCurrentPrice.amount
+            }
+          ]
+        }
+      }
+    });
+  });
+  });
+    /*db.collection('Users',function(err,collection){
       if(err) throw err;
       collection.insert({
           "email": ses.email,
@@ -52,14 +73,15 @@ function insertDB(url_mongo, item, req){
           console.log("Elemento inserito");
      });
     });
-    db.close();
-  });
-}
+    db.close();*/
+  }
 //TODO: aggiungere flag facebook
-var addElement = function(db,data,callback){
+var addUser = function(db,data,callback){
   db.collection('Users').insert({
     "email": data.body.email,
-    "psw": data.body.psw1
+    "psw": data.body.psw1,
+    "fb": data.body.fb,
+    "products":[]
   },function(){
     callback();
   });
@@ -88,7 +110,7 @@ function find_person_reg(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
     findElement(db,data, function(doc) {
-      if(doc==0) addElement(db,data,function(){
+      if(doc==0) addUser(db,data,function(){
         console.log("Elemento inserito");
         callback(1);
       });
@@ -250,7 +272,7 @@ app.post('/index',function(request,response){
   },
   function(error, item) {
     //console.log(item);
-      insertDB(url_mongo,item,request);
+      insert_element(url_mongo,item,request);
       console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
       response.redirect('back');
     });
@@ -298,7 +320,7 @@ app.post('/access_page',function(request,response){
       if(request.body.fb=='Y'){
         MongoClient.connect(url_mongo, function(err, db) {
           assert.equal(null, err);
-          addElement(db,request,function(){
+          addUser(db,request,function(){
             ses.email=request.body.email;
             ses.logged = true;
             response.redirect('/index');
