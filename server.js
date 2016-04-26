@@ -48,8 +48,8 @@ function insert_element(url_mongo, item, req){
           "name": item.Item.Title,
           "itemId": item.Item.ItemID,
           "img": item.Item.PictureURL,
-          "link": "url_2",
-          "target_price": "57",
+          "link": req.body.url,
+          "target_price": req.body.target,
           "price":[
             {
               "timestamp":item.Timestamp,
@@ -108,10 +108,8 @@ function findUserInsert(data,callback){
     assert.equal(null, err);
     findUser(db,data, function(doc) {
       if(doc==0){
-        addUser(db,data,function(){
-          console.log("Elemento inserito");
-          callback(1); //se non c'era e inserito
-        });
+          callback(1); //se non c'era è inserito
+
       }
       else{
         callback(0); //c'è non va inserito
@@ -171,17 +169,18 @@ app.get('/data', function(req, res){
   ses = req.session;
   if(ses.logged){
       var email=ses.email;
-      var elems= new Array();
+      var elems;
       MongoClient.connect(url_mongo, function(err, db) {
-        db.collection('Items',function(err,collection){
+        db.collection('Users',function(err,collection){
           if(err) throw err;
-          var cursor =db.collection('Items').find( { "email": email} );
+          var cursor =db.collection('Users').find( { "email": email} );
           cursor.each(function(err, doc) {
             if(doc!=null){
-              elems.push(doc);
+              elems=doc.products;
               //console.log(elems);
             }
             else{
+              db.close();
               res.send(elems);
             }
         });
@@ -202,15 +201,26 @@ app.get('/data/:item', function(req, res){
     console.log("In data/item");
       var email=ses.email;
       MongoClient.connect(url_mongo, function(err, db) {
-        db.collection('Items',function(err,collection){
+        db.collection('Users',function(err,collection){
           if(err) throw err;
-          var cursor = db.collection('Items').find( { "email": email, "itemId" : id} );
-          cursor.limit(1).each(function(err, doc) {
+          var cursor =db.collection('Users').find( { "email": email} );
+          cursor.each(function(err, doc) {
+            var target;
             if(doc!=null){
-              res.send(doc);
-              console.log("In data/ite -- doc: "+doc);
+              elems=doc.products;
+              for(var el in elems){
+                console.log("Id è "+id+" e el è "+elems[el].itemId);
+                if(elems[el].itemId==id){
+                  target = elems[el];
+                  db.close();
+                  res.send(target);}
+              }
             }
-          });
+            else{
+              db.close();
+              //res.send(target);
+            }
+        });
         });
       });
   }
@@ -337,19 +347,23 @@ app.post('/access_page',function(request,response){
 });
 
 
-app.post('/register',function(request,response){
-    console.log("register post");
-    response.redirect('/index');
-});
+
 //TODO: DA FARE DELETE ELEMENT
 app.post('/delete_elem',function(req,res){
+  ses = req.session;
   var elem_tbd= req.body.elem.split('_')[1];
   console.log(elem_tbd);
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
-    var cursor = db.collection('us').find( { "_id": "email"} );
-    cursor.limit(1).each(function(err, doc) {
-      if(doc!=null)console.log(doc.products[0].price[0].value);
+    var cursor = db.collection('Users').find( { "email": ses.email} );
+    cursor.limit(1).each(function(err, user) {
+      if(user!=null){
+        var elems= user.products;
+        var item= elems[elem_tbd].itemId;
+        db.collection('Users').update({},{$pull: {products:{itemId: item}}});
+        res.redirect('back');
+      }
+      //console.log(doc.products[0].price[0].value);
     });
   });
 
