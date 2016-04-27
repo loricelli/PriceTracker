@@ -18,7 +18,9 @@ app.use(express.static(__dirname+'/modules'));
 app.set('views', __dirname);
 const crypto=require('crypto');
 const secret='lucascemo';
-
+const supersecret='lollofesso';
+const crypto_type='aes192';
+const password_super_segreta='partytoni'
 
 
 //------------------AUX FUNCTIONS-----------------------------------
@@ -86,37 +88,25 @@ function insert_element(url_mongo, item, req){
   }
 
 //TODO: ristruttare con nuovo database
-var findUser = function(db,data, callback) { //user
+var findUser = function(data, callback) { //user torna 1 se trova l'utente 0 altrimenti
   var presence=0;
- var cursor =db.collection('Users').find( { "email": data.body.email } );
- cursor.limit(1).each(function(err, doc) {
-    assert.equal(err, null);
-    if(doc!=null){
-      presence=1;
-      db.close();
-      callback(presence);
-    }
-    else{
-      if(presence==0) callback(presence);
-    }
- });
-
-};
-
-function findUserInsert(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
-    findUser(db,data, function(doc) {
-      if(doc==0){
-          callback(1); //se non c'era è inserito
-
+    var cursor =db.collection('Users').find( { "email": data.body.email } );
+    cursor.limit(1).each(function(err, doc) {
+      assert.equal(err, null);
+      if(doc!=null){
+        presence=1;
+        db.close();
+        callback(presence);
       }
       else{
-        callback(0); //c'è non va inserito
+        if(presence==0) callback(presence);
       }
     });
   });
-}
+};
+
 
 function find_password(data,callback){
   MongoClient.connect(url_mongo, function(err, db) {
@@ -163,8 +153,6 @@ app.get('/errorNotLogged', function(request,response){ //carica la pagina
   fs.createReadStream("./errorNotLogged.html").pipe(response);
 });
 
-//TODO: ristruttare con nuovo database
-
 app.get('/data', function(req, res){
   ses = req.session;
   if(ses.logged){
@@ -192,7 +180,6 @@ app.get('/data', function(req, res){
   }
 });
 
-//TODO: ristruttare con nuovo database
 app.get('/data/:item', function(req, res){
   ses = req.session;
   console.log("item id get");
@@ -276,43 +263,56 @@ app.post('/index',function(request,response){
 });
 
 app.post('/register', function(request, response) {
-  ses = request.session;
-  //se è gia registrato reindirizza, altrimenti procedi con la registrazione
-    const cipher=crypto.createCipher('aes192',secret);
+  console.log("post su register");
+  if(request.body.fb==null){  //imposto la pssword diversa se accede tramite facebook o tramite form di registrazione
+    const cipher=crypto.createCipher(crypto_type,secret);
     var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
     pswEncrypted+=cipher.final('hex');
-    console.log(pswEncrypted+" è la password criptata in aes192");
-    console.log("la password in request è : "+request.body.psw1);
     request.body.psw1=pswEncrypted;
-
-    findUserInsert(request,function(out){
-        if(out==0) { //0 se è gia presente
-          console.log("Elemento già registrato");
-          response.redirect('/access_page');
-        }
-        else{ //1 se
-          ses.email = request.body.email;
-          ses.logged=true;
-          response.redirect('/index');
-        }
-      });
+  }
+  else{
+    const cipher_fb=crypto.createCipher(crypto_type,supersecret);
+    var facebook_secret=cipher_fb.update(password_super_segreta,'utf8','hex');
+    facebook_secret+=cipher_fb.final('hex');
+    request.body.psw1=facebook_secret;
+  }
+  ses = request.session;
+  findUser(request,function(ret){
+      if(ret==1) { //1 se è gia presente
+        console.log("Elemento già registrato");
+        response.redirect('/access_page');
+      }
+      else{
+        MongoClient.connect(url_mongo, function(err, db) {
+          assert.equal(null, err);
+          addUser(db,request,function(){
+            ses.email = request.body.email;
+            ses.logged=true;
+            response.redirect('/index');
+          });
+        });
+      }
+    });
 });
-
-//TODO: ristruttare con nuovo database
 
 app.post('/access_page',function(request,response){
   console.log("post access page");
-
-  const cipher=crypto.createCipher('aes192',secret);
-  var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
-  pswEncrypted+=cipher.final('hex');
-  //console.log(pswEncrypted+" è la password criptata in aes192");
-  //console.log("la password in request è : "+request.body.psw1);
-  request.body.psw1=pswEncrypted;
+  if(request.body.fb==null){
+    const cipher=crypto.createCipher(crypto_type,secret);
+    var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
+    pswEncrypted+=cipher.final('hex');
+    request.body.psw1=pswEncrypted;
+  }
+  else{
+    const cipher_fb=crypto.createCipher(crypto_type,supersecret);
+    var facebook_secret=cipher_fb.update(password_super_segreta,'utf8','hex');
+    facebook_secret+=cipher_fb.final('hex');
+    request.body.psw1=facebook_secret;
+  }
   ses = request.session;
 
-  findUserInsert(request,function(ret){
-    if(ret==1){
+  findUser(request,function(ret){
+    if(ret==0){ //se non lo trova ret=0 allora lo aggiungo direttamente con la stessa politica di register
       if(request.body.fb=='Y'){
         MongoClient.connect(url_mongo, function(err, db) {
           assert.equal(null, err);
@@ -327,21 +327,38 @@ app.post('/access_page',function(request,response){
         response.redirect('/register');
       }
     }
-    else{
-      console.log("Verifico password");
-      find_password(request,function(ret){
-        if(ret==0){
-          console.log("Password errata");
-          response.redirect('/access_page/?error');
-        }
-        else{
-          //variabili di sessione inizializzate
-          console.log("Password giusta");
+    else{//qui l'utente è gia presente nel db allora si passa al verificare la psw inserita oppure se accede tramite facebook bisogna verificare che
+        //non abbia fatto l'accesso tramite il form ma direttamente dal pulsantino
+      if(request.body.fb=='Y'){
+        find_password(request,function(ret){
+          if(ret==0){
+            console.log("ti sei registrato gia con questa mail ma non tramite fb");
+            response.redirect('/access_page/?fb');
+          }
+          else{
+            console.log("psw giusta accesso tramite fb");
+            ses.email=request.body.email;
+            ses.logged=true;
+            response.redirect('/index');
+          }
+        });
+      }
+      else{//accesso tramite form di access_page
+        console.log("Verifico password");
+        find_password(request,function(ret){
+          if(ret==0){
+            console.log("Password errata");
+            response.redirect('/access_page/?error');
+          }
+          else{
+            //variabili di sessione inizializzate
+            console.log("Password giusta");
             ses.email=request.body.email;
             ses.logged = true;
             response.redirect('/index');
-        }
-      });
+          }
+        });
+      }
     }
   });
 });
