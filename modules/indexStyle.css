@@ -37,22 +37,41 @@
       font-size: 16pt;
       box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 4px 8px 0 rgba(0,0,0,0.19);
       border: 0;
+      left: 0;
     }
     #add{
       background-color:#FFF;
       color:#AAA;
-      border:0px solid #AAA;
-      height:20pt;
-      position: absolute;
-      right:0;
-      top:1px;
-      bottom:1px;
+      border:0;
+      height:21pt;
       font-size: 16pt;
+      width: 100%;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 4px 8px 0 rgba(0,0,0,0.19);
+
+    }
+    #target_price{
+      width: 100%
+      background-color:#FFF;
+      color:#AAA;
+      border:0;
+      height:20pt;
+      font-size: 16pt;
+      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 4px 8px 0 rgba(0,0,0,0.19);
+    }
+    table.searcher{
+      width: 80%;
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+      height: 40%;
+      margin-top: 16pt;
+      border-collapse: collapse;
     }
     form{
       width: 80%;
-      margin: auto;position:
-      relative; height: 20pt;
+      margin: auto;
+      position:relative;
+      height: 22pt;
     }
     .header{
       font-size: 16pt;
