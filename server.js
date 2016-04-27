@@ -10,7 +10,7 @@ var session = require('express-session');
 
 //per la sessione
 app.use(session({secret: 'francescocoatto'}));
-//app.engine('html', require('ejs').renderFile);
+
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
 app.use(express.static(__dirname+'/images'));
@@ -38,7 +38,6 @@ function parseUrl(url){
 }
 
 
-//TODO: update su array degli elementi dell'utente
 function insert_element(url_mongo, item, req){
   ses = req.session;
   MongoClient.connect(url_mongo, function(err, db) {
@@ -63,19 +62,9 @@ function insert_element(url_mongo, item, req){
     });
   });
   });
-    /*db.collection('Users',function(err,collection){
-      if(err) throw err;
-      collection.insert({
-          "email": ses.email,
-          "itemId": item.Item.ItemID,
-          "Title": item.Item.Title,
-          "Price": item.Item.ConvertedCurrentPrice.amount
-      },function(){
-          console.log("Elemento inserito");
-     });
-    });
-    db.close();*/
-  }//TODO: aggiungere flag facebook
+
+  }
+
   var addUser = function(db,data,callback){
     db.collection('Users').insert({
       "email": data.body.email,
@@ -87,7 +76,6 @@ function insert_element(url_mongo, item, req){
     });
   }
 
-//TODO: ristruttare con nuovo database
 var findUser = function(data, callback) { //user torna 1 se trova l'utente 0 altrimenti
   var presence=0;
   MongoClient.connect(url_mongo, function(err, db) {
@@ -113,7 +101,7 @@ function find_password(data,callback){
     assert.equal(null, err);
     var presence=0;
     var cursor =db.collection('Users').find( { "email": data.body.email ,"psw": data.body.psw1} );
-    console.log("email"+ data.body.email +" psw "+ data.body.psw1);
+    //console.log("email"+ data.body.email +" psw "+ data.body.psw1);
     cursor.limit(1).each(function(err, doc) {
        assert.equal(err, null);
        if(doc!=null){
@@ -134,7 +122,7 @@ app.get('/logout',function(req,res){
       console.log(err);
     }
     else {
-      console.log("Logged out");
+      console.log("user "+req.body.email+"Logged out");
       res.redirect('/access_page');
     }
   });
@@ -185,9 +173,9 @@ app.get('/data/:item', function(req, res){
   console.log("item id get");
   if(ses.logged){
     var id = req.params.item;
-    console.log("In data/item");
-      var email=ses.email;
-      MongoClient.connect(url_mongo, function(err, db) {
+    //console.log("In data/item");
+    var email=ses.email;
+    MongoClient.connect(url_mongo, function(err, db) {
         db.collection('Users',function(err,collection){
           if(err) throw err;
           var cursor =db.collection('Users').find( { "email": email} );
@@ -196,7 +184,7 @@ app.get('/data/:item', function(req, res){
             if(doc!=null){
               elems=doc.products;
               for(var el in elems){
-                console.log("Id è "+id+" e el è "+elems[el].itemId);
+                //console.log("Id è "+id+" e el è "+elems[el].itemId);
                 if(elems[el].itemId==id){
                   target = elems[el];
                   db.close();
@@ -254,9 +242,8 @@ app.post('/index',function(request,response){
         }
   },
   function(error, item) {
-    //console.log(item);
       insert_element(url_mongo,item,request);
-      console.log("Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
+      console.log("inserito elemento Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
       response.redirect('back');
     });
 
@@ -279,7 +266,6 @@ app.post('/register', function(request, response) {
   ses = request.session;
   findUser(request,function(ret){
       if(ret==1) { //1 se è gia presente
-        console.log("Elemento già registrato");
         response.redirect('/access_page');
       }
       else{
@@ -332,7 +318,7 @@ app.post('/access_page',function(request,response){
       if(request.body.fb=='Y'){
         find_password(request,function(ret){
           if(ret==0){
-            console.log("ti sei registrato gia con questa mail ma non tramite fb");
+            console.log("utente registrato gia con questa mail ma non tramite fb");
             response.redirect('/access_page/?fb');
           }
           else{
@@ -344,10 +330,10 @@ app.post('/access_page',function(request,response){
         });
       }
       else{//accesso tramite form di access_page
-        console.log("Verifico password");
+        console.log("Verifico password.....");
         find_password(request,function(ret){
           if(ret==0){
-            console.log("Password errata");
+            console.log("oh no! Password errata");
             response.redirect('/access_page/?error');
           }
           else{
@@ -365,11 +351,9 @@ app.post('/access_page',function(request,response){
 
 
 
-//TODO: DA FARE DELETE ELEMENT
 app.post('/delete_elem',function(req,res){
   ses = req.session;
   var elem_tbd= req.body.elem.split('_')[1];
-  console.log(elem_tbd);
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
     var cursor = db.collection('Users').find( { "email": ses.email} );
@@ -385,6 +369,7 @@ app.post('/delete_elem',function(req,res){
   });
 
 });
+
 app.listen(8080);
 console.log("server is running.....");
 
