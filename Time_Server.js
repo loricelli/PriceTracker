@@ -6,7 +6,15 @@ var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 var events=require('events');
-
+var nodemailer= require('nodemailer');
+var transporter = nodemailer.createTransport('smtps://pricetrackerservicemail%40gmail.com:pricetracke@smtp.gmail.com');
+var mailOptions = {
+    from: '"PriceTracker" <lorenzo.ricelli@gmail.com>', // sender address
+    to: 'lorenzo.ricelli@gmail.com', // list of receivers
+    subject: 'Hello ✔', // Subject line
+    text: 'Hello world 🐴', // plaintext body
+    html: '<b>Hello world 🐴</b>' // html body
+};
 var sec=1000;
 var min=60*sec;
 var hour=60*min;
@@ -18,7 +26,7 @@ app.use(require('body-parser').urlencoded({extended: true}));
 var eventEmitter=new events.EventEmitter();
 
 
-var update_element_ebay=function(id,db,user){
+var update_element_ebay=function(target,id,db,user){
   ebay.xmlRequest({
       'serviceName': 'Shopping',
       'opType': 'GetSingleItem',
@@ -30,8 +38,23 @@ var update_element_ebay=function(id,db,user){
   function(error, item) {
     db.collection("Users").update({"email": user.email, "products.name": item.Item.Title},
     {"$push": {'products.$.price' : {"timestamp": item.Timestamp, "value": item.Item.ConvertedCurrentPrice.amount }}});
+
+    if(target<=item.Item.ConvertedCurrentPrice){
+
+      transporter.sendMail({
+          from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: 'Raggiungimento soglia prodotto', // Subject line
+          text: "Il prodotto "+ item.Item.Title+" ha raggiunto la soglia che volevi.\nSegui il link per comprarlo"+item.Item.link; // plaintext body
+      },
+      function(error, info){
+         if(error){
+             return console.log(error);
+         }
+         console.log('Message sent: ' + info.response);
+     });
     }
-  );
+  });
 };
 
 
@@ -44,7 +67,8 @@ var listener=function(){
         var elem_list=user.products;
         for(var elem in elem_list){
           var id_product=elem_list[elem].itemId;
-          update_element_ebay(id_product,db,user)
+          var target_product= elem_list[elem].target_price;
+          update_element_ebay(target_product,id_product,db,user)
         }
       }
     });
@@ -62,7 +86,8 @@ var emetti_evento=function(){
   console.log("YOLO");
 }*/
 
-setInterval(emetti_evento, hour);
+setInterval(emetti_evento, 30*sec);
 //setInterval(fake_event, 1000);
 
 app.listen(8081);
+console.log("Server running..");
