@@ -5,7 +5,9 @@
   "manifest_version": 2,
   "permissions": [
   "contextMenus",
-  "http://localhost:8080"
+  "http://localhost:8080",
+  "cookies",
+"http://*/*"
   ],
 
   "background": {

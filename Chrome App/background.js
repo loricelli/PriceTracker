@@ -9,10 +9,14 @@
 
 
 function contextClicked(e){
+	console.log("SONO QUI");
+	chrome.cookies.get({url: "http://localhost:8080",name: 'email'},function(cookie) {
+		console.log(cookie.value);
+		var target_price = prompt("Inserire prezzo target", "");
     $.ajax({
-        url: "http://localhost:8080/",
+        url: "http://localhost:8080/index",
         type: "POST",
-        data: {url: e.pageUrl},
+        data: {url: e.pageUrl, email: cookie.value,target:target_price},
         success: function(data, textStatus) {
             console.log("success");
             console.log(data);
@@ -27,5 +31,6 @@ function contextClicked(e){
         complete: function(XMLHttpRequest, textStatus) {
             console.log("complete");
         }
+				});
     });
 }

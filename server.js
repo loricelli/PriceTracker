@@ -7,10 +7,10 @@ var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 var session = require('express-session');
-
+var cookieParser= require('cookie-parser');
 //per la sessione
 app.use(session({secret: 'francescocoatto'}));
-
+app.use(cookieParser());
 app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
 app.use(express.static(__dirname+'/images'));
@@ -63,13 +63,13 @@ function is_present(req,url_mongo,item,db,callback){
 function insert_element(url_mongo, item, req){
   ses = req.session;
   MongoClient.connect(url_mongo, function(err, db) {
-    console.log(ses.email);
+    console.log(req.body.email);
     var present;
     is_present(req,url_mongo,item,db,function(present){
       if(present==0){
         db.collection('Users',function(err,collection){
           if(err) throw err;
-          collection.update({"email": ses.email },{$push: {
+          collection.update({"email": req.body.email },{$push: {
             products: {
               "name": item.Item.Title,
               "itemId": item.Item.ItemID,
@@ -283,6 +283,7 @@ app.post('/index',function(request,response){
   },
   function(error, item) {
       //TODO if(!is_present(id))
+      console.log("Entro in insert element");
       insert_element(url_mongo,item,request);
       console.log("inserito elemento Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
       response.redirect('back');
@@ -291,6 +292,9 @@ app.post('/index',function(request,response){
 });
 
 app.post('/register', function(request, response) {
+
+  response.cookie('email', request.body.email, { maxAge: 900000, httpOnly: true });
+
   console.log("post su register");
   if(request.body.fb==null){  //imposto la pssword diversa se accede tramite facebook o tramite form di registrazione
     const cipher=crypto.createCipher(crypto_type,secret);
@@ -324,6 +328,8 @@ app.post('/register', function(request, response) {
 
 app.post('/access_page',function(request,response){
   console.log("post access page");
+  response.cookie('email', request.body.email, { maxAge: 900000, httpOnly: true });
+
   if(request.body.fb==null){
     const cipher=crypto.createCipher(crypto_type,secret);
     var pswEncrypted=cipher.update(request.body.psw1,'utf8','hex');
