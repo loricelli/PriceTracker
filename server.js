@@ -38,32 +38,62 @@ function parseUrl(url){
 }
 
 
+function is_present(req,url_mongo,item,db,callback){
+  ses=req.session;
+  var cursor=db.collection('Users').find({
+    email:ses.email,
+    products:{
+      "$elemMatch":{
+        "itemId": item.Item.ItemID
+      }
+    }
+  });
+  cursor.limit(1).each(function(err,doc){
+    assert.equal(null,err);
+    if(doc!=null){
+      callback(1);
+    }
+    else {
+      callback(0);
+    }
+  });
+}
+
+
 function insert_element(url_mongo, item, req){
   ses = req.session;
   MongoClient.connect(url_mongo, function(err, db) {
     console.log(ses.email);
-    db.collection('Users',function(err,collection){
-      if(err) throw err;
-      collection.update({"email": ses.email},{$push: {
-        products: {
-          "name": item.Item.Title,
-          "itemId": item.Item.ItemID,
-          "img": item.Item.PictureURL,
-          "link": req.body.url,
-          "target_price": req.body.target,
-          "price":[
-            {
-              "timestamp":item.Timestamp,
-              "value":item.Item.ConvertedCurrentPrice.amount
+    var present;
+    is_present(req,url_mongo,item,db,function(present){
+      if(present==0){
+        db.collection('Users',function(err,collection){
+          if(err) throw err;
+          collection.update({"email": ses.email },{$push: {
+            products: {
+              "name": item.Item.Title,
+              "itemId": item.Item.ItemID,
+              "img": item.Item.PictureURL,
+              "link": req.body.url,
+              "target_price": req.body.target,
+              "price":[
+                {
+                  "timestamp":item.Timestamp,
+                  "value":item.Item.ConvertedCurrentPrice.amount
+                }
+              ]
             }
-          ]
-        }
+          }
+        });
+
+      });
+      }
+      else {
+        db.close();
       }
     });
   });
-  });
-
-  }
+}
 
   var addUser = function(db,data,callback){
     db.collection('Users').insert({
@@ -214,6 +244,16 @@ app.get('/index', function(request,response){ //carica la pagina
   }
 });
 
+app.get('/index_welcome', function(request,response){ //carica la pagina
+  ses = request.session;
+  if(ses.logged){
+      response.writeHead(200, {"Content-type": "text/html"});
+    	console.log("index_welcome get");
+      //response.redirect('/index')
+      fs.createReadStream("./index_welcome.html").pipe(response);
+  }
+});
+
 app.get('/register', function(request,response){ //carica la pagina
 	response.writeHead(200, {"Content-type": "text/html"});
 	console.log("register request get");
@@ -242,6 +282,7 @@ app.post('/index',function(request,response){
         }
   },
   function(error, item) {
+      //TODO if(!is_present(id))
       insert_element(url_mongo,item,request);
       console.log("inserito elemento Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
       response.redirect('back');
@@ -274,7 +315,7 @@ app.post('/register', function(request, response) {
           addUser(db,request,function(){
             ses.email = request.body.email;
             ses.logged=true;
-            response.redirect('/index');
+            response.redirect('/index_welcome');
           });
         });
       }
@@ -350,7 +391,6 @@ app.post('/access_page',function(request,response){
 });
 
 
-
 app.post('/delete_elem',function(req,res){
   ses = req.session;
   var elem_tbd= req.body.elem.split('_')[1];
@@ -361,10 +401,10 @@ app.post('/delete_elem',function(req,res){
       if(user!=null){
         var elems= user.products;
         var item= elems[elem_tbd].itemId;
+        console.log("utente "+ses.email+" want to delete elem con id "+item);
         db.collection('Users').update({},{$pull: {products:{itemId: item}}});
         res.redirect('back');
       }
-      //console.log(doc.products[0].price[0].value);
     });
   });
 

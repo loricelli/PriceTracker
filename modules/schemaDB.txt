@@ -4,6 +4,7 @@ Users:{
   fb:""
   products:[
   {
+    name:""
     link:"",
     item_id:,
     target:,
@@ -15,4 +16,4 @@ Users:{
     ]
   }
   ]
-} 
+}

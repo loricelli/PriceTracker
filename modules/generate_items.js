@@ -8,7 +8,7 @@ function generateItems(){
        for(i=0; i<data.length; i++){
             tbody += '<tr style="vertical-align:middle;" width="100%" class="prods">';
             tbody += '<td class="prods">';
-            tbody += '<input id="remove_'+i+'" align="center" type="image" src="/remove-32.png" width=26 height=26 name="remove" onclick="prova(id)"/>';
+            tbody += '<input id="remove_'+i+'" align="center" type="image" src="/remove-32.png" width=26 height=26 name="remove" onclick="deleteElem(id)"/>';
             tbody += '</td>'
             tbody += '<td class="prods">';
             tbody += data[i].name.toLowerCase().substring(0,25) +".." ;
@@ -25,7 +25,7 @@ function generateItems(){
     });
 }
 
-function prova(id){
+function deleteElem(id){
   var result = confirm("Want to delete?");
   if(result){
     $.ajax({
@@ -46,7 +46,7 @@ function getItemData(item){
      for(var el in data){
        var lookup = el.toString();
        if(el=="img") htmlProd+='<img src="'+data[el]+' width="150" height="150">';
-       else if(el=="price") htmlProd += "<tr><td>"+el+": "+data[el][0]['value'] +"€ e è stato controllato il "+data[el][0]['timestamp']+"</td></tr>";
+       else if(el=="price") htmlProd += "<tr><td>"+el+": "+data[el][data[el].length-1]['value'] +"€ e è stato controllato il "+data[el][data[el].length-1]['timestamp']+"</td></tr>";
        else htmlProd += "<tr><td>"+el+": "+data[el]+"</td></tr>";
      }
      //htmlProd += JSON.stringify(data);
