@@ -69,7 +69,10 @@ function insert_element(url_mongo, item, req){
       if(present==0){
         db.collection('Users',function(err,collection){
           if(err) throw err;
-          collection.update({"email": req.body.email },{$push: {
+          var user;
+          if(req.body.email==null) user= ses.email;
+          else user=req.body.email;
+          collection.update({"email": user },{$push: {
             products: {
               "name": item.Item.Title,
               "itemId": item.Item.ItemID,
@@ -272,7 +275,7 @@ app.get('/access_page', function(request,response){ //carica la pagina
 app.post('/index',function(request,response){
 	console.log("post index");
   var item_id= parseUrl(request.body.url);
-
+  if(item_id!=null){
   ebay.xmlRequest({
       'serviceName': 'Shopping',
       'opType': 'GetSingleItem',
@@ -282,13 +285,15 @@ app.post('/index',function(request,response){
         }
   },
   function(error, item) {
-      //TODO if(!is_present(id))
-      console.log("Entro in insert element");
-      insert_element(url_mongo,item,request);
-      console.log("inserito elemento Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
+      if( item.Item!=null){
+        console.log(item);
+        console.log("Entro in insert element");
+        insert_element(url_mongo,item,request);
+        console.log("inserito elemento Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
+      }
       response.redirect('back');
     });
-
+  }
 });
 
 app.post('/register', function(request, response) {
@@ -402,13 +407,16 @@ app.post('/delete_elem',function(req,res){
   var elem_tbd= req.body.elem.split('_')[1];
   MongoClient.connect(url_mongo, function(err, db) {
     assert.equal(null, err);
-    var cursor = db.collection('Users').find( { "email": ses.email} );
+    var utente;
+    if(req.body.email==null) utente= ses.email;
+    else utente=req.body.email;
+    var cursor = db.collection('Users').find( { "email": utente} );
     cursor.limit(1).each(function(err, user) {
       if(user!=null){
         var elems= user.products;
         var item= elems[elem_tbd].itemId;
-        console.log("utente "+ses.email+" want to delete elem con id "+item);
-        db.collection('Users').update({},{$pull: {products:{itemId: item}}});
+        console.log("utente "+utente+" want to delete elem con id "+item);
+        db.collection('Users').update({email:utente},{$pull: {products:{itemId: item}}});
         res.redirect('back');
       }
     });
