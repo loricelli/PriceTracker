@@ -71,7 +71,8 @@ function insert_element(url_mongo, item, req){
           if(err) throw err;
           var user;
           if(req.body.email==null) user= ses.email;
-          else user=req.body.email;
+          else user=req.body.email.replace(/%[0-9]{2}/g,'@');
+          //console.log("user: " + user);
           collection.update({"email": user },{$push: {
             products: {
               "name": item.Item.Title,
