@@ -12,8 +12,12 @@ function contextClicked(e){
 	console.log("SONO QUI");
 	chrome.cookies.get({url: "http://localhost:8080",name: 'email'},function(cookie) {
 		console.log(cookie.value);
-		var target_price = prompt("Inserire prezzo target", "");
-    $.ajax({
+		var target_price = prompt("Inserire il prezzo desiderato per il prodotto", "");
+		while(target_price==""){
+			alert("sbadatone non hai inserito il prezzo! ");
+			var target_price = prompt("Inserire il prezzo desiderato per il prodotto", "");
+		}
+		$.ajax({
         url: "http://localhost:8080/index",
         type: "POST",
         data: {url: e.pageUrl, email: cookie.value,target:target_price},

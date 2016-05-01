@@ -1,7 +1,7 @@
 {
-  "name": "Tracker!",
-  "description": "Product tracker for Ebay",
-  "version": "1.0",
+  "name": "PriceTracker",
+  "description": "Product tracker for Ebay Products",
+  "version": "1.1",
   "manifest_version": 2,
   "permissions": [
   "contextMenus",
