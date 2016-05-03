@@ -10,10 +10,12 @@
     tr.prods:hover{background-color:#4CAF50; }
     .container{
       background-color: #DCDCDC;
-      border: #AAA solid 2px;
       border-collapse: collapse;
       padding: 0px;
 
+    }
+    td.container{
+      vertical-align: top;
     }
     table.container{
       width: 80%;
@@ -28,7 +30,7 @@
       font-family: arial;
       font-size: 12pt;
       background-color: #999;
-      color: white;
+      color: #000;
       height: auto;
     }
     #searchBar{width: 100%;

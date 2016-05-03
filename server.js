@@ -272,6 +272,13 @@ app.get('/access_page', function(request,response){ //carica la pagina
   fs.createReadStream("./access_page.html").pipe(response);
 });
 
+app.get('/chisiamo',function(request,response){
+  response.writeHead(200, {"Content-type": "text/html"});
+	console.log("chisiamo request get");
+  //response.redirect('/access_page');
+  fs.createReadStream("./chisiamo.html").pipe(response);
+});
+
 
 app.post('/index',function(request,response){
 	console.log("post index");
@@ -287,7 +294,6 @@ app.post('/index',function(request,response){
   },
   function(error, item) {
       if( item.Item!=null){
-        console.log(item);
         console.log("Entro in insert element");
         insert_element(url_mongo,item,request);
         console.log("inserito elemento Orario: " + item.Timestamp + "\nArticolo: " + item.Item.Title + "\nPrezzo: " + item.Item.ConvertedCurrentPrice.amount +" €");
