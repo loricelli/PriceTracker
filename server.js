@@ -434,6 +434,104 @@ app.post('/delete_elem',function(req,res){
 app.listen(8080);
 console.log("server is running.....");
 
+//-----------API-------------------
+app.get('/info/listaProdotti/:user_id',function(request,response){
+  console.log("GET API DATA USER ID");
+  var elems;
+  MongoClient.connect(url_mongo, function(err, db) {
+    db.collection('Users',function(err,collection){
+      if(err) throw err;
+      var cursor =db.collection('Users').find( { "_id": ObjectId(request.params.user_id)} );
+      cursor.each(function(err, doc) {
+        if(doc!=null){
+          elems=doc.products;
+        }
+        else{
+          db.close();
+          response.send(elems);
+        }
+    });
+    });
+  });
+});
+
+app.get('/info/dettagliProdotto/:user_id/:item_id',function(request,response){
+  console.log("GET API DATA USER ID ITEM");
+  var elems;
+  var item_id = request.params.item_id;
+  MongoClient.connect(url_mongo, function(err, db) {
+      db.collection('Users',function(err,collection){
+        if(err) throw err;
+        var cursor =db.collection('Users').find( { "_id": ObjectId(request.params.user_id)} );
+        cursor.each(function(err, doc) {
+          var target;
+          if(doc!=null){
+            elems=doc.products;
+            for(var el in elems){
+              if(elems[el].itemId==item_id){
+                target = elems[el];
+                db.close();
+                response.send(target);}
+            }
+          }
+          else{
+            db.close();
+          }
+      });
+      });
+    });
+});
+
+app.get('/info/prezzi/:user_id/:item_id',function(request,response){
+  console.log("GET API DATA USER ID ITEM");
+  var elems;
+  var item_id = request.params.item_id;
+  MongoClient.connect(url_mongo, function(err, db) {
+      db.collection('Users',function(err,collection){
+        if(err) throw err;
+        var cursor =db.collection('Users').find( { "_id": ObjectId(request.params.user_id)} );
+        cursor.each(function(err, doc) {
+          var target;
+          if(doc!=null){
+            elems=doc.products;
+            for(var el in elems){
+              if(elems[el].itemId==item_id){
+                target = elems[el];
+                db.close();
+                response.send(target.price);}
+            }
+          }
+          else{
+            db.close();
+          }
+      });
+      });
+    });
+});
+
+app.get('/info/profilo/:user_id',function(request,response){
+  console.log("GET API DATA USER ID PROFILO");
+  var elem;
+  MongoClient.connect(url_mongo,function(err,db){
+    var cursor=db.collection('Users').find({"_id":ObjectId(request.params.user_id)});
+    cursor.each(function(err,doc){
+      if(doc!=null){
+        elem={
+          "email": doc.email,
+          "fb":doc.fb,
+          "num_elem":doc.products.length
+        }
+
+      }
+      else{
+        db.close();
+        response.send(elem);
+      }
+    });
+  });
+});
+//-----------API-------------------
+
 //--------Modifiche ebay-api-----------------
 //TODO: add eventually ti buildXmlInput   var xmlb=xmlBody.toString().split('ItemId').join("ItemID");//split the string and replace ItemId with ItemID
 // and 101 in defaults

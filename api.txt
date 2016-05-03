@@ -1,0 +1,62 @@
+get /info/listaProdotti/:user_id
+
+Ritorna un file json contenente la lista dei prodotti dell'utente passato come parametro:
+
+Esempio: get /data/info/12345
+
+Ritorna:
+
+[
+	{
+	    "name": "Nome prodotto",
+	    "itemId": "123456789",
+	    "img": "link eBay immagine prodotto",
+	    "link": "link prodotto eBay",
+	    "target_price": "123",
+	    "price": [
+	      {
+		"timestamp": "orario controllo",
+		"value": 1234
+	      }
+	    ]
+	  }
+	},
+	{...}
+]
+
+
+get /info/dettagliProdotto/:user_id/:item_id
+
+Ritorna i dettagli del prodotto item_id appartenente all'utente user_id
+
+Esempio: get /data/info/12345/123456789
+
+Ritorna:
+
+{
+    "name": "Nome prodotto",
+    "itemId": "123456789",
+    "img": "link eBay immagine prodotto",
+    "link": "link prodotto eBay",
+    "target_price": "123",
+    "price": [
+      {
+	"timestamp": "orario controllo",
+	"value": 1234
+      }
+    ]
+  }
+
+get /info/prezzi/:user_id/:item_id
+
+Ritorna la lista degli ultimi 10 controlli sul prezzo dell'elemento passato come parametro
+
+Esempio: get /data/info/12345/123456789/prezzi
+
+[
+      {
+	"timestamp": "orario controllo",
+	"value": 1234
+      }
+    ]
+

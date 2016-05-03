@@ -32,8 +32,27 @@
 	<table id="accesso">
 		<tr><th>APIs Docs</th></tr>
 
-				<tr><td>api call </td> <td> description 1</td></tr>
-				<tr><td>api call </td> <td> description 1</td></tr>
+				<tr><td>ListaProdotti </td> <td> get /data/info/:user_id
+					Ritorna un file json contenente la lista dei prodotti dell'utente passato come parametro:
+					<code>[
+						{
+						    "name": "Nome prodotto",
+						    "itemId": "123456789",
+						    "img": "link eBay immagine prodotto",
+						    "link": "link prodotto eBay",
+						    "target_price": "123",
+						    "price": [
+						      {
+							"timestamp": "orario controllo",
+							"value": 12345
+						      }
+						    ]
+						  }
+						},
+						{...}
+					] </code>
+				</td></tr>
+				<tr><td>DettagliProdotto </td> <td> description 1</td></tr>
 				<tr><td>api call </td> <td> description 1</td></tr>
 
 	</form>
