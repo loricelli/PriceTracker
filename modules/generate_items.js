@@ -43,13 +43,13 @@ function deleteElem(id){
 
 function getItemData(item){
   $.get("http://localhost:8080/data/"+item,function(data){
-     var htmlProd = '<table style="width:80%;" id="specs">';
+     var htmlProd = '<table id="dett">';
      for(var el in data){
        var lookup = el.toString();
-       if(el=="img") htmlProd+='<img src="'+data[el]+' width="150" height="150">';
-       else if(el=="link") htmlProd += "<tr><td>"+el+":<a href='"+data[el]+"'> link al prodotto</a></td></tr>";
-       else if(el=="price") htmlProd += "<tr><td>"+el+": "+data[el][data[el].length-1]['value'] +"€ e è stato controllato il "+data[el][data[el].length-1]['timestamp']+"</td></tr>";
-       else htmlProd += "<tr><td>"+el+": "+data[el]+"</td></tr>";
+       if(el=="img") htmlProd+='<tr><td id="imma"><img src="'+data[el]+' width="150" height="150"></img></td><td>Grafico?</td></tr>';
+       else if(el=="link") htmlProd += "<tr><td colspan='2'>"+el+":<a href='"+data[el]+"' onclick='window.open(this.href);return false'> link al prodotto</a></td></tr>";
+       else if(el=="price") htmlProd += "<tr><td colspan='2'>"+el+": "+data[el][data[el].length-1]['value'] +"€ e è stato controllato il "+data[el][data[el].length-1]['timestamp']+"</td></tr>";
+       else htmlProd += "<tr><td colspan='2'>"+el+": "+data[el]+"</td></tr>";
      }
      //htmlProd += JSON.stringify(data);
      htmlProd += '</table>';

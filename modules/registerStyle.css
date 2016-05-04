@@ -1,0 +1,51 @@
+#loginBut{
+  width: 100%;
+  height: 20pt;
+  font-size: 16pt;
+  background-color: white;
+  color: #999;
+  border: 0;
+}
+#loginBut:hover{
+  background-color: #4CAF50;
+  color:white;
+}
+
+#accesso{
+  width: 300px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10pt;
+  text-align: center;
+  padding: 15px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 4px 8px 0 rgba(0,0,0,0.19);
+  background-color: #DCDCDC;
+}
+td{
+    padding: 5px;
+}
+th{
+  font-size: 18pt;
+  font-weight: lighter;
+  color: #4CAF50;
+}
+input[type=text]:focus {
+    border: 3px solid #4CAF50;
+}
+input[type=password]:focus {
+    border: 3px solid #4CAF50;
+}
+input{
+  height: 20pt;
+  font-size: 16pt;
+  width: 100%;
+  border: 3px solid #DCDCDC;
+}
+#headerText{
+  position: relative;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 10pt;
+  text-align: center;
+}
