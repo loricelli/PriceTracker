@@ -15,14 +15,13 @@
     "mongodb": "^2.1.16",
     "nodemailer": "^2.3.2"
   },
-  "devDependencies": {},
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/loricelli/PriceTracker.git"
+    "url": "https://github.com/loricelli/PriceTracker"
   },
   "keywords": [
     "Price",
@@ -30,9 +29,5 @@
     "Ebay"
   ],
   "author": "PriceTracker inc.",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/loricelli/PriceTracker/issues"
-  },
-  "homepage": "https://github.com/loricelli/PriceTracker#readme"
+  "license": "ISC"
 }
