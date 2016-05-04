@@ -2,7 +2,7 @@ get /info/listaProdotti/:user_id
 
 Ritorna un file json contenente la lista dei prodotti dell'utente passato come parametro:
 
-Esempio: get /data/info/12345
+Esempio: get /info/listaProdotti/12345
 
 Ritorna:
 
@@ -21,7 +21,8 @@ Ritorna:
 	    ]
 	  }
 	},
-	{...}
+	{...},
+	...
 ]
 
 
@@ -29,7 +30,7 @@ get /info/dettagliProdotto/:user_id/:item_id
 
 Ritorna i dettagli del prodotto item_id appartenente all'utente user_id
 
-Esempio: get /data/info/12345/123456789
+Esempio: get /info/dettagliProdotto/12345/123456789
 
 Ritorna:
 
@@ -51,12 +52,25 @@ get /info/prezzi/:user_id/:item_id
 
 Ritorna la lista degli ultimi 10 controlli sul prezzo dell'elemento passato come parametro
 
-Esempio: get /data/info/12345/123456789/prezzi
+Esempio: get /info/prezzi/12345/123456789/prezzi
 
 [
       {
 	"timestamp": "orario controllo",
 	"value": 1234
-      }
+      },
+			{...},
+			...
     ]
 
+GET /info/profilo/:user_id
+
+Ritorna i dettagli visibili dell'utente con user_id passato come parametro. Se "fb" è null, allora si è registrato senza il facebook login
+
+Esempio: get /info/profilo/12345
+
+{
+	"email":"mario@rossi.it",
+	"fb":null,
+	"num_elem":4
+}

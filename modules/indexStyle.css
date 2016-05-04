@@ -102,3 +102,11 @@
     td.footer:hover{
       background-color: #AAA;
     }
+#specs{
+  padding: 2px;
+}
+tr{
+  padding: 2px;
+}
+tr:nth-child(even) {background-color: #DCDCDC; }
+tr:nth-child(odd) {background-color: #F5F5F5; }

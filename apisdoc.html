@@ -10,12 +10,16 @@
 	<title>APIs Docs</title>
 	<link rel="stylesheet" type="text/css" href="modules/generic.css" />
 	<link rel="stylesheet" type="text/css" href="modules/access_pageStyle.css" />
+	<link rel="stylesheet" type="text/css" href="modules/apiStyle.css" />
 	<style>
    @import url(generic.css);
   </style>
 	<style>
    @import url(access_pageStyle.css);
   </style>
+	<style>
+	 @import url(apiStyle.css);
+	</style>
 </head>
 
 <body onload="messaggioErrore()">
@@ -30,31 +34,95 @@
 </script>
 	<div class="container">
 	<table id="accesso">
-		<tr><th>APIs Docs</th></tr>
+		<tr><th colspan="2">APIs Docs</th></tr>
 
-				<tr><td>ListaProdotti </td> <td> get /data/info/:user_id
-					Ritorna un file json contenente la lista dei prodotti dell'utente passato come parametro:
-					<code>[
-						{
-						    "name": "Nome prodotto",
-						    "itemId": "123456789",
-						    "img": "link eBay immagine prodotto",
-						    "link": "link prodotto eBay",
-						    "target_price": "123",
-						    "price": [
-						      {
-							"timestamp": "orario controllo",
-							"value": 12345
-						      }
-						    ]
-						  }
-						},
-						{...}
-					] </code>
+				<tr><td class="nome">ListaProdotti </td> <td>
+				<code>GET /info/listaProdotti/:user_id </code><br/>
+
+				Ritorna un file json contenente la lista dei prodotti dell'utente passato come parametro:<br/>
+
+				Esempio: <code>GET /info/listaProdotti/12345</code>
+	<pre class="desc">
+	Ritorna:
+	[
+		{
+		    "name": "Nome prodotto",
+		    "itemId": "123456789",
+		    "img": "link eBay immagine prodotto",
+		    "link": "link prodotto eBay",
+		    "target_price": "123",
+		    "price": [
+		      {
+			"timestamp": "orario controllo",
+			"value": 1234
+		      }
+		    ]
+		  }
+		},
+		{...},
+		...
+	]</pre>
 				</td></tr>
-				<tr><td>DettagliProdotto </td> <td> description 1</td></tr>
-				<tr><td>api call </td> <td> description 1</td></tr>
 
+				<tr><td class="nome">DettagliProdotto </td>
+				<td>
+					<code>GET /info/dettagliProdotto/:user_id/:item_id</code><br/>
+
+					Ritorna i dettagli del prodotto item_id appartenente all'utente user_id<br/>
+
+					Esempio: <code>GET /info/dettagliProdotto/12345/123456789</code><br/>
+	<pre class="desc">
+	Ritorna:
+	{
+	    "name": "Nome prodotto",
+	    "itemId": "123456789",
+	    "img": "link eBay immagine prodotto",
+	    "link": "link prodotto eBay",
+	    "target_price": "123",
+	    "price": [
+	      {
+		"timestamp": "orario controllo",
+		"value": 1234
+	      }
+	    ]
+	  }
+	</pre>
+				</td></tr>
+				<tr><td class="nome">Prezzi</td>
+					<td>
+						<code>GET /info/prezzi/:user_id/:item_id</code><br/>
+
+						Ritorna la lista degli ultimi 10 controlli sul prezzo dell'elemento passato come parametro<br/>
+
+						Esempio: <code>GET /info/prezzi/12345/123456789/prezzi</code><br/>
+	<pre class="desc">
+	Ritorna:
+	[
+	      {
+		"timestamp": "orario controllo",
+		"value": 1234
+	      },
+				{...},
+				...
+	]
+	</pre>
+					</td></tr>
+				<tr><td class="nome">Profilo </td>
+					<td>
+						<code>GET /info/profilo/:user_id</code><br/>
+
+						Ritorna i dettagli visibili dell'utente con user_id passato come parametro. Se "fb" è null, allora si è registrato senza il facebook login<br/>
+
+						Esempio: <code>GET /info/profilo/12345</code>
+	<pre class="desc">
+	Ritorna:
+	{
+		"email":"mario@rossi.it",
+		"fb":null,
+		"num_elem":4
+	}
+	</pre>
+					</td></tr>
 	</form>
 </table>
 	 <a href= "http://localhost:8080/chisiamo"> Chi siamo </a>

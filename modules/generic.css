@@ -4,3 +4,14 @@ body{
   background-color: #999;
   height: auto;
 }
+a{
+  color: #000;
+  text-decoration: none;
+}
+a:visited{
+  color: #FFF;
+}
+a:hover{
+  color: #FFF;
+  text-decoration: underline;
+}
