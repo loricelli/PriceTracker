@@ -18,6 +18,7 @@ app.use(require('body-parser').json());
 app.use(require('body-parser').urlencoded({extended: true}));
 app.use(express.static(__dirname+'/images'));
 app.use(express.static(__dirname+'/modules'));
+app.use(express.static(__dirname+'/download'));
 app.set('views', __dirname);
 const crypto=require('crypto');
 const secret='lucascemo';
@@ -273,6 +274,11 @@ app.get('/index', function(request,response){ //carica la pagina
   }
 });
 
+app.get('/download',function(request,response){
+  console.log("download request get");
+  var file=__dirname+'/download/PriceTrackerChromeApp.crx';
+  response.download(file);
+});
 
 app.get('/register', function(request,response){ //carica la pagina
 	response.writeHead(200, {"Content-type": "text/html"});
