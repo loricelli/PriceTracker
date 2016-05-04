@@ -14,36 +14,6 @@
    @import url(indexStyle.css);
   </style>
 
-	<script type="text/javascript">
-		function checkSearch(url, target){
-			var ret=true, mess="";
-			//controlla se l'url fa parte del dominio
-			if(url==null || url.length==0 || url.search("www.ebay.it")<0){
-				mess+="¤ Inserire URL valida! \n";
-				ret = false;
-			}
-			if(target=="" || isNaN(target)){
-				mess+="¤ Inserire prezzo Target! \n";
-				ret = false;
-			}
-			//idEBAY : 12 caratteri numerici ([0-9]{12}){1}
-			var pattern = new RegExp('([0-9]{12}){1}');
-			var id = url.match(pattern);
-
-			if(id==null || id.length==0){
-				ret= false;
-			}
-			if(!ret){
-				window.alert(mess);
-			}
-			return ret;
-		}
-
-		function checkDelete(){
-			var result = confirm("Sei sicuro di voler chiudere il tuo account?Tutti i dati andranno persi");
-			return result;
-		}
-	</script>
 	<div id="fb-root"></div>
 	<script>(function(d, s, id) {
 	  var js, fjs = d.getElementsByTagName(s)[0];
@@ -65,7 +35,7 @@
 		<tr>
 			<td class="searcher" width="70%"><input name="url" type="text" value=""  placeholder="Inserire URL" id="searchBar" required></td>
 			<td class="searcher" width="20%"><input name="target" type="numeric" value="" placeholder="Prezzo target" id="target_price" required ></td>
-			<td class="searcher" width="10%"><input type="submit" value="Add" id="add" /></a></td>
+			<td class="searcher" width="10%"><input type="submit" value="Aggiungi" id="add" /></a></td>
 		</tr>
 		</form>
 	</table>

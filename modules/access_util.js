@@ -14,3 +14,10 @@ FB.api('/me', {fields: ['email', 'name']},function(response) {
   });
 });
 }
+
+function messaggioErrore(){
+  urlq = location.href.split('?');
+  urlP = urlq[1];
+  if(urlP=='error') alert("password errata! ");
+  if(urlP=='fb') alert("sei gia registrato tramite facebook! \n devi accedere tramite il pulsante di facebook ");
+}

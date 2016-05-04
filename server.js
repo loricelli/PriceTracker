@@ -32,6 +32,7 @@ var transporter= nodemailer.createTransport({
         pass: 'pricetracke'
     }
 });
+//var transporter = nodemailer.createTransport('smtps://pricetrackerservicemail%40gmail.com:pricetracke@smtp.gmail.com');
 
 var sec=1000;
 var min=60*sec;
@@ -272,15 +273,6 @@ app.get('/index', function(request,response){ //carica la pagina
   }
 });
 
-app.get('/index_welcome', function(request,response){ //carica la pagina
-  ses = request.session;
-  if(ses.logged){
-      response.writeHead(200, {"Content-type": "text/html"});
-    	console.log("index_welcome get");
-      //response.redirect('/index')
-      fs.createReadStream("./index_welcome.html").pipe(response);
-  }
-});
 
 app.get('/register', function(request,response){ //carica la pagina
 	response.writeHead(200, {"Content-type": "text/html"});
@@ -602,34 +594,47 @@ var update_element_ebay=function(target,id,db,user){
     });
 
     var range= (target)*1.05;
-    if(item.Item.ConvertedCurrentPrice<=target){
-      transporter.sendMail({
-          from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
-          to: user.email, // list of receivers
-          subject: 'Raggiungimento soglia prodotto', // Subject line
-          text: "Il prodotto "+ item.Item.Title+" ha raggiunto la soglia che volevi 🔍 😎 🐧" // plaintext body
-      },
-      function(error, info){
-         if(error){
-             return console.log(error);
-         }
-         console.log('Message sent: ' + info.response);
-     });
-    }
-    else if(item.Item.ConvertedCurrentPrice < range){
-      transporter.sendMail({
-          from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
-          to: user.email, // list of receivers
-          subject: 'Raggiungimento soglia prodotto', // Subject line
-          text: "Il prodotto "+ item.Item.Title+" è molto vicino alla soglia da te te inserita.⚡ 🎈 🌵" // plaintext body
-      },
-      function(error, info){
-         if(error){
-             return console.log(error);
-         }
-         console.log('Message sent: ' + info.response);
-     });
-    }
+    var cursor=db.collection("Users").find({"email": user.email, "products.name": item.Item.Title});
+    cursor.each(function(err,doc){
+      var prodotti;
+      if(doc!=null){
+      prodotti=doc.products;
+      for(var i in prodotti ){
+        if(prodotti[i].name==item.Item.Title){
+          if(item.Item.ConvertedCurrentPrice.amount<=target && !prodotti[i].email_sent){
+            transporter.sendMail({
+                from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
+                to: user.email, // list of receivers
+                subject: 'Raggiungimento soglia prodotto', // Subject line
+                text: "Il prodotto "+ item.Item.Title+" ha raggiunto la soglia che volevi 🔍 😎 🐧. Compralo a "+prodotti[i].link // plaintext body
+            },
+            function(error, info){
+               if(error){
+                   return console.log(error);
+               }
+               console.log('Message sent: ' + info.response + " e email_sent è stata cambiata");
+               db.collection("Users").update( { "email": user.email,"products.name": item.Item.Title}, { $set: { 'products.$.email_sent':true} });
+
+           });
+          }
+          else if(item.Item.ConvertedCurrentPrice.amount < range && !prodotti[i].email_sent){
+            transporter.sendMail({
+                from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
+                to: user.email, // list of receivers
+                subject: 'Raggiungimento soglia prodotto', // Subject line
+                text: "Il prodotto "+ item.Item.Title+" è molto vicino alla soglia da te te inserita.⚡ 🎈 🌵" // plaintext body
+            },
+            function(error, info){
+               if(error){
+                   return console.log(error);
+               }
+               console.log('Message sent: ' + info.response + " e email_sent è stata cambiata" );
+           });
+          }
+        }
+      }
+      }
+    });
   });
 };
 

@@ -24,22 +24,7 @@
 </head>
 
 <body>
-<script>
 
-function check_form(documento){
-	var psw1= documento.url_in.psw1.value;
-	var psw2= documento.url_in.psw2.value;
-	if(psw1==psw2){ //match
-    return true;
-  }
-  if(psw1.length<2 && psw2.length<2){
-    alert("La password deve essere di almeno 8 caratteri");
-    return false;
-  }
-	alert("Le due password not coincidono. It's very brutto! Yo BD");
-	return false;
-}
-</script>
 <div id="headerText">
  <img src="/logo.png"></img>
 </div>

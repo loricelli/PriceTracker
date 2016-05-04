@@ -4,9 +4,9 @@ Users:{
   fb:""
   products:[
   {
-    name:""
     link:"",
     item_id:,
+    email_sent: boolean,
     target:,
     price:[
     {
@@ -16,4 +16,4 @@ Users:{
     ]
   }
   ]
-}
+} 
