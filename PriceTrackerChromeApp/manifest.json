@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "permissions": [
   "contextMenus",
-  "http://localhost:8080",
+  "http://price-trackerservice.rhcloud.com",
   "cookies",
 "http://*/*"
   ],

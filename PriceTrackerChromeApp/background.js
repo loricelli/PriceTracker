@@ -10,7 +10,7 @@
 
 function contextClicked(e){
 	console.log("SONO QUI");
-	chrome.cookies.get({url: "http://localhost:8080",name: 'email'},function(cookie) {
+	chrome.cookies.get({url: "http://price-trackerservice.rhcloud.com",name: 'email'},function(cookie) {
 		console.log(cookie.value);
 		var target_price = prompt("Inserire il prezzo desiderato per il prodotto", "");
 		while(target_price==""){
@@ -18,7 +18,7 @@ function contextClicked(e){
 			var target_price = prompt("Inserire il prezzo desiderato per il prodotto", "");
 		}
 		$.ajax({
-        url: "http://localhost:8080/index",
+        url: "http://price-trackerservice.rhcloud.com/index",
         type: "POST",
         data: {url: e.pageUrl, email: cookie.value,target:target_price},
         success: function(data, textStatus) {

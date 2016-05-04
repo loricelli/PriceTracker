@@ -5,10 +5,10 @@ FB.api('/me',{fields: ['email', 'name']}, function(response) {
 
   $.ajax({
     type: "POST",
-    url: "http://localhost:8080/register",
+    url: "http://price-trackerservice.rhcloud.com/register",
     data: {email: response.email, psw1: response.name, fb: "Y"},
     success: function(data){
-      window.location.replace("http://localhost:8080/index");
+      window.location.replace("http://price-trackerservice.rhcloud.com/index");
     }
   });
 });

@@ -1,7 +1,7 @@
 
 
 function generateItems(){
-  $.get("http://localhost:8080/data", function(data){
+  $.get("http://price-trackerservice.rhcloud.com/data", function(data){
     var tbody = '';
     var singleItem;
     var theader = '<div><table width="100%" class="prods"><th class="prods" colspan="3">Prodotti</th>\n';
@@ -31,18 +31,18 @@ function deleteElem(id){
   if(result){
     $.ajax({
       type: "POST",
-      url: "http://localhost:8080/delete_elem",
+      url: "http://price-trackerservice.rhcloud.com/delete_elem",
       data: {elem: id},
       success: function(data){
         console.log("eliminato");
-       window.location.replace("http://localhost:8080/index");
+       window.location.replace("http://price-trackerservice.rhcloud.com/index");
       }
     });
   }
 }
 
 function getItemData(item){
-  $.get("http://localhost:8080/data/"+item,function(data){
+  $.get("http://price-trackerservice.rhcloud.com/data/"+item,function(data){
      var htmlProd = '<table id="dett">';
      for(var el in data){
        var lookup = el.toString();
