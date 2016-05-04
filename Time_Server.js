@@ -7,7 +7,15 @@ var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 var events=require('events');
 var nodemailer= require('nodemailer');
-var transporter = nodemailer.createTransport('smtps://pricetrackerservicemail%40gmail.com:pricetracke@smtp.gmail.com');
+//var transporter = nodemailer.createTransport('smtps://pricetrackerservicemail%40gmail.com:pricetracke@smtp.gmail.com');
+
+var transporter= nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'pricetrackerservicemail@gmail.com',
+        pass: 'pricetracke'
+    }
+});
 var mailOptions = {
     from: '"PriceTracker" <lorenzo.ricelli@gmail.com>', // sender address
     to: 'lorenzo.ricelli@gmail.com', // list of receivers
@@ -38,14 +46,27 @@ var update_element_ebay=function(target,id,db,user){
   function(error, item) {
     db.collection("Users").update({"email": user.email, "products.name": item.Item.Title},
     {"$push": {'products.$.price' : {"timestamp": item.Timestamp, "value": item.Item.ConvertedCurrentPrice.amount }}});
-
-    if(target<=item.Item.ConvertedCurrentPrice){
-
+    var range= (target)*1.05;
+    if(item.Item.ConvertedCurrentPrice<=target){
       transporter.sendMail({
           from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
           to: user.email, // list of receivers
           subject: 'Raggiungimento soglia prodotto', // Subject line
-          text: "Il prodotto "+ item.Item.Title+" ha raggiunto la soglia che volevi.\nSegui il link per comprarlo"+item.Item.link; // plaintext body
+          text: "Il prodotto "+ item.Item.Title+" ha raggiunto la soglia che volevi" // plaintext body
+      },
+      function(error, info){
+         if(error){
+             return console.log(error);
+         }
+         console.log('Message sent: ' + info.response);
+     });
+    }
+    else if(item.Item.ConvertedCurrentPrice < range){
+      transporter.sendMail({
+          from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: 'Raggiungimento soglia prodotto', // Subject line
+          text: "Il prodotto "+ item.Item.Title+" è molto vicino alla soglia da te te inserita." // plaintext body
       },
       function(error, info){
          if(error){
@@ -78,16 +99,11 @@ var listener=function(){
 eventEmitter.addListener("check_prices",listener);
 
 var emetti_evento=function(){
-  eventEmitter.emit("check_prices");
   console.log("check prices emesso");
+  eventEmitter.emit("check_prices");
 }
 
-/*var fake_event=function(){
-  console.log("YOLO");
-}*/
-
 setInterval(emetti_evento, 30*sec);
-//setInterval(fake_event, 1000);
 
 app.listen(8081);
 console.log("Server running..");
