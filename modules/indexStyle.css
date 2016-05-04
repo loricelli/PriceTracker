@@ -110,3 +110,17 @@ tr{
 }
 tr:nth-child(even) {background-color: #DCDCDC; }
 tr:nth-child(odd) {background-color: #F5F5F5; }
+#objid{
+  position: absolute;
+  bottom: 2pt;
+  left: 10%;
+  right: auto;
+  top: auto;
+}
+div.footer{
+  position: absolute;
+  bottom: 20pt;
+  left: 10%;
+  right: 10%;
+  top: auto;
+}

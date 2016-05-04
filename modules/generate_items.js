@@ -5,7 +5,7 @@ function generateItems(){
     var tbody = '';
     var singleItem;
     var theader = '<div><table width="100%" class="prods"><th class="prods" colspan="3">Prodotti</th>\n';
-       for(i=0; i<data.length; i++){
+       for(i=0; i<data.length-1; i++){
             tbody += '<tr style="vertical-align:middle;" width="100%" class="prods">';
             tbody += '<td class="prods">';
             tbody += '<input id="remove_'+i+'" align="center" type="image" src="/remove-32.png" width=26 height=26 name="remove" onclick="deleteElem(id)"/>';
@@ -22,6 +22,7 @@ function generateItems(){
        }
     var tfooter = '</table></div>';
     document.getElementById('products').innerHTML = theader + tbody + tfooter;
+    document.getElementById('objid').innerHTML = "IdUtente: "+data[data.length-1];
     });
 }
 

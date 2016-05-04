@@ -187,6 +187,7 @@ app.get('/data', function(req, res){
           cursor.each(function(err, doc) {
             if(doc!=null){
               elems=doc.products;
+              elems.push(doc._id.toString());
               //console.log(elems);
             }
             else{
