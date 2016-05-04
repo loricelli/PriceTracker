@@ -192,6 +192,12 @@ app.get('/errorNotLogged', function(request,response){ //carica la pagina
   fs.createReadStream("./errorNotLogged.html").pipe(response);
 });
 
+app.get('/apisdoc', function(request,response){ //carica la pagina
+	response.writeHead(500, {"Content-type": "text/html"});
+	console.log("error not logged user");
+  fs.createReadStream("./apisdoc.html").pipe(response);
+});
+
 app.get('/data', function(req, res){
   ses = req.session;
   if(ses.logged){
