@@ -8,6 +8,9 @@ var ObjectId = require('mongodb').ObjectID;
 var url_mongo = 'mongodb://localhost:27017/test';
 var session = require('express-session');
 var cookieParser= require('cookie-parser');
+var events=require('events');
+var nodemailer= require('nodemailer');
+
 //per la sessione
 app.use(session({secret: 'francescocoatto'}));
 app.use(cookieParser());
@@ -21,6 +24,20 @@ const secret='lucascemo';
 const supersecret='lollofesso';
 const crypto_type='aes192';
 const password_super_segreta='partytoni'
+
+var transporter= nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'pricetrackerservicemail@gmail.com',
+        pass: 'pricetracke'
+    }
+});
+
+var sec=1000;
+var min=60*sec;
+var hour=60*min;
+
+var eventEmitter=new events.EventEmitter();
 
 
 //------------------AUX FUNCTIONS-----------------------------------
@@ -532,6 +549,101 @@ app.get('/info/profilo/:user_id',function(request,response){
   });
 });
 //-----------API-------------------
+
+
+//-----------------------------PARTE DEL SERVER MAIL----------------------------------------------
+
+    /*
+    🙌😎👻👌⌚🎓👓👘💵💴💶💷💸💣🎈📲💭🎮📉🐣🐓🐷🐘🐨🐼🐧🐗🐊🍺🍬🍦🍯🍭🍌🍙🍉🍄🌵🍏🍅🌽⚡🌐⚽🚽🏆🏄🛂🔥🔑🔐🔍🔎
+    */
+
+
+var update_element_ebay=function(target,id,db,user){
+  ebay.xmlRequest({
+      'serviceName': 'Shopping',
+      'opType': 'GetSingleItem',
+      'appId': 'LorenzoR-PriceTra-PRD-2e805b337-56dc7eec',      // FILL IN YOUR OWN APP KEY, GET ONE HERE: https://publisher.ebaypartnernetwork.com/PublisherToolsAPI
+      params: {
+        'ItemId':id    // FILL IN A REAL ItemID
+        }
+    },
+  function(error, item) {
+    db.collection("Users").update({"email": user.email, "products.name": item.Item.Title},
+    {"$push": {'products.$.price' : {"timestamp": item.Timestamp, "value": item.Item.ConvertedCurrentPrice.amount }}});
+
+    var cursor=db.collection("Users").find({"email": user.email, "products.name": item.Item.Title});
+    cursor.each(function(err,doc){
+      var prodotti;
+      if(doc!=null){
+        prodotti=doc.products;
+        for(var i in prodotti ){
+          if(prodotti[i].name==item.Item.Title && prodotti[i].price.length>10){
+            db.collection("Users").update( { "email": user.email,"products.name": item.Item.Title}, { $pop: { 'products.$.price': -1 } });
+          }
+        }
+      }
+    });
+
+    var range= (target)*1.05;
+    if(item.Item.ConvertedCurrentPrice<=target){
+      transporter.sendMail({
+          from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: 'Raggiungimento soglia prodotto', // Subject line
+          text: "Il prodotto "+ item.Item.Title+" ha raggiunto la soglia che volevi 🔍 😎 🐧" // plaintext body
+      },
+      function(error, info){
+         if(error){
+             return console.log(error);
+         }
+         console.log('Message sent: ' + info.response);
+     });
+    }
+    else if(item.Item.ConvertedCurrentPrice < range){
+      transporter.sendMail({
+          from: '"PriceTracker" <pricetrackerservicemail@gmail.com>', // sender address
+          to: user.email, // list of receivers
+          subject: 'Raggiungimento soglia prodotto', // Subject line
+          text: "Il prodotto "+ item.Item.Title+" è molto vicino alla soglia da te te inserita.⚡ 🎈 🌵" // plaintext body
+      },
+      function(error, info){
+         if(error){
+             return console.log(error);
+         }
+         console.log('Message sent: ' + info.response);
+     });
+    }
+  });
+};
+
+
+var listener=function(){
+  MongoClient.connect(url_mongo,function(err,db){
+    assert.equal(err,null);
+    var cursor=db.collection('Users').find();
+    cursor.each(function(err,user){
+      if(user!=null){
+        var elem_list=user.products;
+        for(var elem in elem_list){
+          var id_product=elem_list[elem].itemId;
+          var target_product= elem_list[elem].target_price;
+          update_element_ebay(target_product,id_product,db,user)
+        }
+      }
+    });
+  });
+};
+
+eventEmitter.addListener("check_prices",listener);
+
+var emetti_evento=function(){
+  console.log("check prices emesso");
+  eventEmitter.emit("check_prices");
+}
+
+setInterval(emetti_evento, 12*hour);
+
+//-----------------------------FINE PARTE DEL SERVER MAIL-----------------------------------------
 
 //--------Modifiche ebay-api-----------------
 //TODO: add eventually ti buildXmlInput   var xmlb=xmlBody.toString().split('ItemId').join("ItemID");//split the string and replace ItemId with ItemID
