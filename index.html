@@ -38,8 +38,20 @@
 			}
 			return ret;
 		}
-	</script>
 
+		function checkDelete(){
+			var result = confirm("Sei sicuro di voler chiudere il tuo account?Tutti i dati andranno persi");
+			return result;
+		}
+	</script>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.6&appId=227275500970804";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
 
 </head>
 
@@ -71,9 +83,11 @@
 <div class="footer">
 	<table width=100% height=100% class="footer">
 		<tr>
-			<td class="footer"><a href="/errorNotLogged" class="bottomer" >primo</a></td>
-			<td class="footer"><a href="/errorNotLogged" class="bottomer" >secondo</a></td>
-			<td class="footer"><a href="/errorNotLogged" class="bottomer" >terzo</a></td>
+			<!--<td class="footer"><a href="/errorNotLogged" class="bottomer" >primo</a></td> -->
+			<td class="footer"><a href="/deleteAccount" class="bottomer"  onclick= "return checkDelete();" >delete account</a></td>
+			<td class="footer"><a href="/errorNotLogged" class="bottomer" >
+				<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-mobile-iframe="true"></div>
+			</a></td>
 			<td class="footer"><a href="/logout" class="bottomer">logout</a></td>
 		</tr>
 	</table>

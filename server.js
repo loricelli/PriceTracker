@@ -355,7 +355,7 @@ app.post('/register', function(request, response) {
           addUser(db,request,function(){
             ses.email = request.body.email;
             ses.logged=true;
-            response.redirect('/index_welcome');
+            response.redirect('/index');
           });
         });
       }
@@ -432,7 +432,6 @@ app.post('/access_page',function(request,response){
   });
 });
 
-
 app.post('/delete_elem',function(req,res){
   ses = req.session;
   var elem_tbd= req.body.elem.split('_')[1];
@@ -454,7 +453,19 @@ app.post('/delete_elem',function(req,res){
   });
 
 });
+app.get('/deleteAccount',function(req,res){
+  ses = req.session;
 
+  MongoClient.connect(url_mongo, function(err, db) {
+    assert.equal(null, err);
+    var utente;
+    if(req.body.email==null) utente= ses.email;
+    else utente=req.body.email;
+    var cursor = db.collection('Users').findOneAndDelete( { "email": utente} );
+    db.close();
+  });
+  res.redirect('/logout');
+});
 app.listen(8080);
 console.log("server is running.....");
 

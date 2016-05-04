@@ -27,7 +27,7 @@ function generateItems(){
 }
 
 function deleteElem(id){
-  var result = confirm("Want to delete?");
+  var result = confirm("Vuoi cancellare l'elemento?");
   if(result){
     $.ajax({
       type: "POST",
