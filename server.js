@@ -464,7 +464,7 @@ app.get('/deleteAccount',function(req,res){
   });
   res.redirect('/logout');
 });
-app.listen(8080);
+app.listen(80);
 console.log("server is running.....");
 
 //-----------API-------------------
