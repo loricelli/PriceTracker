@@ -18,21 +18,23 @@ function check_form(documento){
 	var psw1= documento.url_in.psw1.value;
 	var psw2= documento.url_in.psw2.value;
   var mail= documento.url_in.email.value;
-  var res=true;
+  var passw=true;
+  var email=false;
   for(var i in DOMAINS){
-    if(mail.search(DOMAINS[i])>=0){
-      res= res && true;
+    if(mail.search(DOMAINS[i])>0){
+      email=true;
     }
   }
 
 	if(psw1==psw2){ //match
-    res =res && true;
+    passw =passw && true;
   }
   if(psw1.length<6 && psw2.length<6){
-    res = res && false;
+    passw = passw && false;
   }
-  if(!res) alert("Campi errati, bitch!");
-	return res;
+  if (!email) alert("l'email inserita non è valida");
+  if(!passw) alert("le password inserite sono differenti o troppo corte (almeno 6 caratteri)");
+	return passw && email;
 }
 
 var DOMAINS = [
