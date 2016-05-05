@@ -1,5 +1,3 @@
-
-
 function generateItems(){
   $.get("http://localhost:8080/data", function(data){
     var tbody = '';
@@ -43,20 +41,19 @@ function deleteElem(id){
 
 function getItemData(item){
   $.get("http://localhost:8080/data/"+item,function(data){
-     var htmlProd = '<table id="dett">';
+     var htmlProd = '<table id="dett"><tr><th>Dettagli Prodotto</th></tr>';
      for(var el in data){
        var lookup = el.toString();
-       if(el=="img") htmlProd+='<tr><td id="imma"><img src="'+data[el]+' width="150" height="150"></img></td><td>Grafico?</td></tr>';
-       else if(el=="link") htmlProd += "<tr><td colspan='2'>"+el+":<a href='"+data[el]+"' onclick='window.open(this.href);return false'> link al prodotto</a></td></tr>";
-       else if(el=="price") htmlProd += "<tr><td colspan='2'>"+el+": "+data[el][data[el].length-1]['value'] +"€ e è stato controllato il "+data[el][data[el].length-1]['timestamp']+"</td></tr>";
-       else htmlProd += "<tr><td colspan='2'>"+el+": "+data[el]+"</td></tr>";
+       if(el=="img") htmlProd+='<tr><td id="imma"><img src="'+data[el]+' width="170" height="170"></img></td></tr>';
+       else if(el=="link") htmlProd += "<tr><td><a href='"+data[el]+"' onclick='window.open(this.href);return false'> link al prodotto</a></td></tr>";
+       else if(el=="price") htmlProd += "<tr><td> Prezzo:"+data[el][data[el].length-1]['value'] +"€ e è stato controllato il "+data[el][data[el].length-1]['timestamp']+"</td></tr>";
+       else htmlProd += "<tr><td >"+data[el]+"</td></tr>";
      }
      //htmlProd += JSON.stringify(data);
      htmlProd += '</table>';
       document.getElementById("specs").innerHTML = htmlProd;
   });
 }
-
 function checkSearch(url, target){
   var ret=true, mess="";
   //controlla se l'url fa parte del dominio
@@ -85,3 +82,4 @@ function checkDelete(){
   var result = confirm("Sei sicuro di voler chiudere il tuo account?Tutti i dati andranno persi");
   return result;
 }
+

@@ -5,7 +5,7 @@ var ebay = require('ebay-api/index.js');
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert');
 var ObjectId = require('mongodb').ObjectID;
-var url_mongo = 'mongodb://localhost:27017/test';
+var url_mongo = 'mongodb://ptdg:toniwebmaster@ds011382.mlab.com:11382/pricetracker';
 var session = require('express-session');
 var cookieParser= require('cookie-parser');
 var events=require('events');
@@ -272,6 +272,9 @@ app.get('/index', function(request,response){ //carica la pagina
       //response.redirect('/index')
       fs.createReadStream("./index.html").pipe(response);
   }
+  else {
+    response.redirect('/errorNotLogged');
+  }
 });
 
 app.get('/download',function(request,response){
@@ -464,7 +467,10 @@ app.get('/deleteAccount',function(req,res){
   });
   res.redirect('/logout');
 });
-app.listen(8080);
+
+var portNo=Number(process.env.PORT || 8080);
+
+app.listen(portNo);
 console.log("server is running.....");
 
 //-----------API-------------------
